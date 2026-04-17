@@ -1,0 +1,13 @@
+{{- if and .Values.inference.enabled .Values.inference.pdb.enabled -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-inference
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "inference" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.inference.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "llm-stack.componentSelectorLabels" (dict "component" "inference" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 6 }}
+{{- end }}

@@ -1,0 +1,25 @@
+{{- if .Values.gateway.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-gateway
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "gateway" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+  {{- with .Values.gateway.traefik.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.gateway.traefik.service.type }}
+  ports:
+    - name: https
+      port: {{ .Values.gateway.traefik.service.port }}
+      targetPort: websecure
+      protocol: TCP
+    - name: metrics
+      port: 9100
+      targetPort: metrics
+      protocol: TCP
+  selector:
+    {{- include "llm-stack.componentSelectorLabels" (dict "component" "gateway" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+{{- end }}

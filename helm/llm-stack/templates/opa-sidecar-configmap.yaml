@@ -1,0 +1,11 @@
+{{- if and .Values.gateway.enabled .Values.gateway.opa.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-opa-policy
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "gateway" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+data:
+  authz.rego: |
+{{ .Values.gateway.opa.policy | indent 4 }}
+{{- end }}

@@ -1,0 +1,104 @@
+{{- if .Values.vectorDb.enabled -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-qdrant
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+spec:
+  serviceName: {{ include "llm-stack.fullname" . }}-qdrant-headless
+  replicas: {{ .Values.vectorDb.replicaCount }}
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      {{- include "llm-stack.componentSelectorLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "llm-stack.componentLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 8 }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "6333"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: {{ include "llm-stack.serviceAccountName" . }}
+      {{- include "llm-stack.imagePullSecrets" . | nindent 6 }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      terminationGracePeriodSeconds: 60
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    {{- include "llm-stack.componentSelectorLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 20 }}
+                topologyKey: topology.kubernetes.io/zone
+      containers:
+        - name: qdrant
+          image: {{ include "llm-stack.image" (dict "image" .Values.vectorDb.image "global" .Values.global) }}
+          imagePullPolicy: {{ .Values.vectorDb.image.pullPolicy | default .Values.global.imagePullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          env:
+            - name: QDRANT__LOG_LEVEL
+              value: {{ .Values.vectorDb.config.logLevel | quote }}
+            - name: QDRANT__TELEMETRY_DISABLED
+              value: {{ .Values.vectorDb.config.telemetryDisabled | quote }}
+            - name: QDRANT__SERVICE__HTTP_PORT
+              value: "6333"
+            - name: QDRANT__SERVICE__GRPC_PORT
+              value: "6334"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - name: http
+              containerPort: 6333
+              protocol: TCP
+            - name: grpc
+              containerPort: 6334
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.vectorDb.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /qdrant/storage
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+  {{- if .Values.vectorDb.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          {{- toYaml .Values.vectorDb.persistence.accessModes | nindent 10 }}
+        {{- with (or .Values.vectorDb.persistence.storageClass .Values.global.storageClass) }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.vectorDb.persistence.size }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,83 @@
+# Terraform
+**/.terraform/*
+**/.terraform.lock.hcl.backup
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfplan
+*.tfplan.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+.terraform-version
+
+# Local environment files (never commit)
+.env
+.env.*
+*.env
+*.env.local
+.envrc
+
+# Secrets, keys, certs
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*_rsa
+*_rsa.pub
+*.kubeconfig
+kubeconfig*
+credentials.json
+service-account*.json
+!service-account*.example.json
+
+# Helm
+**/charts/
+**/Chart.lock.backup
+**/*.tgz
+!helm/llm-stack/Chart.lock
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Python (used in supporting scripts/tests)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Node (used in supporting scripts/tests)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build/output directories
+dist/
+build/
+out/
+target/
+tmp/
+vendor/
+
+# Diagnostic bundles
+diag-bundle-*.tar.gz
+*.diag.tar.gz
+
+# Airgap vendor artifacts
+images/
+*.tar
+!examples/**/*.tar

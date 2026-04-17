@@ -1,0 +1,65 @@
+name: helm-lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'helm/**'
+      - '.github/workflows/helm-lint.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-kubeval:
+    name: helm lint + render + kubeval
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: Setup kubeconform (kubeval successor)
+        run: |
+          curl -L -o /tmp/kubeconform.tar.gz \
+            https://github.com/yannh/kubeconform/releases/download/v0.6.4/kubeconform-linux-amd64.tar.gz
+          tar -xzf /tmp/kubeconform.tar.gz -C /tmp
+          sudo mv /tmp/kubeconform /usr/local/bin/kubeconform
+          kubeconform -v
+
+      - name: Helm lint (default values)
+        run: helm lint helm/llm-stack
+
+      - name: Helm lint (airgap values)
+        run: helm lint helm/llm-stack --values helm/llm-stack/values-airgap.yaml
+
+      - name: Helm lint (dev values)
+        run: helm lint helm/llm-stack --values helm/llm-stack/values-dev.yaml
+
+      - name: Render templates (default)
+        run: helm template llm-stack helm/llm-stack > /tmp/rendered-default.yaml
+
+      - name: Render templates (airgap)
+        run: |
+          helm template llm-stack helm/llm-stack \
+            --values helm/llm-stack/values-airgap.yaml \
+            > /tmp/rendered-airgap.yaml
+
+      - name: Render templates (dev)
+        run: |
+          helm template llm-stack helm/llm-stack \
+            --values helm/llm-stack/values-dev.yaml \
+            > /tmp/rendered-dev.yaml
+
+      - name: Validate rendered manifests against Kubernetes 1.28 schemas
+        run: |
+          for f in /tmp/rendered-default.yaml /tmp/rendered-airgap.yaml /tmp/rendered-dev.yaml; do
+            echo "==> $f"
+            kubeconform -kubernetes-version 1.28.0 -strict -ignore-missing-schemas "$f"
+          done

@@ -1,0 +1,324 @@
+# ----------------------------------------------------------------------------
+# llm-stack - default values
+#
+# Production-safe defaults. Override per environment in a second values file
+# (see values-airgap.yaml, values-dev.yaml).
+# ----------------------------------------------------------------------------
+
+nameOverride: ""
+fullnameOverride: ""
+
+# ----------------------------------------------------------------------------
+# Global image pull configuration
+# ----------------------------------------------------------------------------
+global:
+  # Single registry all components pull from. Override to private registry
+  # (e.g. acmeacr.azurecr.io/llm-stack) in airgap environments.
+  imageRegistry: ""
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+  storageClass: ""
+
+# ----------------------------------------------------------------------------
+# Common pod security / scheduling defaults
+# ----------------------------------------------------------------------------
+commonLabels:
+  app.kubernetes.io/part-of: llm-stack
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# ----------------------------------------------------------------------------
+# Inference (vLLM)
+# ----------------------------------------------------------------------------
+inference:
+  enabled: true
+  replicaCount: 2
+
+  image:
+    repository: vllm/vllm-openai
+    tag: "v0.4.3"
+    pullPolicy: IfNotPresent
+
+  model:
+    # HF model id or local path; override in airgap to a path inside the
+    # mirrored model volume.
+    name: "meta-llama/Meta-Llama-3.1-8B-Instruct"
+    # If model is staged on a PVC, set modelPath. If served from a local
+    # directory baked into the image, leave empty.
+    modelPath: ""
+    # Maximum model context length (tokens) vLLM will allocate KV cache for.
+    maxModelLen: 8192
+    # Quantization: null, "awq", "gptq", "fp8".
+    quantization: null
+
+  args:
+    extra:
+      - "--trust-remote-code=false"
+      - "--disable-log-requests"
+
+  env: []
+
+  service:
+    type: ClusterIP
+    port: 8000
+
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+      memory: "80Gi"
+      cpu: "8"
+    requests:
+      nvidia.com/gpu: 1
+      memory: "60Gi"
+      cpu: "4"
+
+  nodeSelector:
+    workload: llm-inference
+
+  tolerations:
+    - key: nvidia.com/gpu
+      operator: Equal
+      value: "true"
+      effect: NoSchedule
+
+  affinity: {}
+
+  probes:
+    startupSeconds: 600
+    liveness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 120
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readiness:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 8
+    metricName: DCGM_FI_DEV_GPU_UTIL
+    targetAverageValue: 70
+
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+  modelVolume:
+    enabled: false
+    claimName: "llm-model-cache"
+
+# ----------------------------------------------------------------------------
+# Vector DB (Qdrant)
+# ----------------------------------------------------------------------------
+vectorDb:
+  enabled: true
+  engine: qdrant
+
+  image:
+    repository: qdrant/qdrant
+    tag: "v1.9.2"
+    pullPolicy: IfNotPresent
+
+  replicaCount: 3
+
+  service:
+    type: ClusterIP
+    httpPort: 6333
+    grpcPort: 6334
+
+  persistence:
+    enabled: true
+    size: 200Gi
+    storageClass: ""
+    accessModes:
+      - ReadWriteOnce
+
+  resources:
+    limits:
+      memory: "8Gi"
+      cpu: "4"
+    requests:
+      memory: "4Gi"
+      cpu: "2"
+
+  config:
+    logLevel: INFO
+    telemetryDisabled: true
+
+# ----------------------------------------------------------------------------
+# Gateway (Traefik + OPA)
+# ----------------------------------------------------------------------------
+gateway:
+  enabled: true
+
+  traefik:
+    image:
+      repository: traefik
+      tag: "v3.0.3"
+      pullPolicy: IfNotPresent
+
+    replicaCount: 2
+
+    service:
+      type: LoadBalancer
+      # Expose internally only; override annotations for cloud-specific
+      # internal load balancers.
+      annotations:
+        service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+        service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
+        networking.gke.io/load-balancer-type: "Internal"
+      port: 443
+
+    resources:
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+      requests:
+        memory: "256Mi"
+        cpu: "200m"
+
+  opa:
+    enabled: true
+    image:
+      repository: openpolicyagent/opa
+      tag: "0.65.0-envoy"
+      pullPolicy: IfNotPresent
+
+    # Inline policy. Override with a ConfigMap reference in production.
+    policy: |
+      package authz
+
+      default allow := false
+
+      allow if {
+        input.attributes.request.http.method == "GET"
+        startswith(input.attributes.request.http.path, "/health")
+      }
+
+      allow if {
+        valid_token
+        allowed_route
+      }
+
+      valid_token if {
+        input.attributes.request.http.headers.authorization
+        startswith(input.attributes.request.http.headers.authorization, "Bearer ")
+      }
+
+      allowed_route if {
+        startswith(input.attributes.request.http.path, "/v1/")
+      }
+
+    resources:
+      limits:
+        memory: "256Mi"
+        cpu: "250m"
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+
+  ingress:
+    enabled: true
+    className: traefik
+    hostname: llm.internal.example.com
+    tls:
+      enabled: true
+      secretName: llm-stack-tls
+
+# ----------------------------------------------------------------------------
+# Observability (OpenTelemetry Collector)
+# ----------------------------------------------------------------------------
+observability:
+  otelCollector:
+    enabled: true
+    image:
+      repository: otel/opentelemetry-collector-contrib
+      tag: "0.100.0"
+      pullPolicy: IfNotPresent
+
+    # Destinations. Override in values-airgap.yaml for customer-internal
+    # Loki / Prometheus / Tempo endpoints.
+    exporters:
+      prometheus:
+        endpoint: "prometheus-server.monitoring.svc.cluster.local:9090"
+      loki:
+        endpoint: "http://loki-gateway.monitoring.svc.cluster.local:80/loki/api/v1/push"
+      otlp:
+        endpoint: "tempo.monitoring.svc.cluster.local:4317"
+        insecure: true
+
+    resources:
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+      requests:
+        memory: "256Mi"
+        cpu: "200m"
+
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    labels:
+      release: prometheus
+
+# ----------------------------------------------------------------------------
+# Secrets (External Secrets Operator)
+# ----------------------------------------------------------------------------
+externalSecrets:
+  enabled: true
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+
+  refreshInterval: 1h
+
+  secrets:
+    - name: llm-stack-jwt
+      data:
+        - secretKey: jwt-signing-key
+          remoteRef:
+            key: llm-stack/jwt
+            property: signing_key
+    - name: llm-stack-model-registry
+      data:
+        - secretKey: registry-token
+          remoteRef:
+            key: llm-stack/registry
+            property: token
+
+# ----------------------------------------------------------------------------
+# Network policy (default-deny)
+# ----------------------------------------------------------------------------
+networkPolicy:
+  enabled: true
+  # Additional namespaces that are allowed to call the gateway (e.g. the
+  # customer's reverse proxy or API gateway namespace).
+  allowedIngressNamespaces:
+    - monitoring

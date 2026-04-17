@@ -1,0 +1,27 @@
+{{- if .Values.vectorDb.enabled -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-qdrant
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+spec:
+  minAvailable: {{ sub .Values.vectorDb.replicaCount 1 | max 1 }}
+  selector:
+    matchLabels:
+      {{- include "llm-stack.componentSelectorLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 6 }}
+{{- end }}
+{{- if .Values.gateway.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-gateway
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "gateway" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      {{- include "llm-stack.componentSelectorLabels" (dict "component" "gateway" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 6 }}
+{{- end }}

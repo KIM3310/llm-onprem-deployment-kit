@@ -1,0 +1,121 @@
+{{- if .Values.gateway.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-gateway
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "gateway" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+spec:
+  replicas: {{ .Values.gateway.traefik.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      {{- include "llm-stack.componentSelectorLabels" (dict "component" "gateway" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "llm-stack.componentLabels" (dict "component" "gateway" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 8 }}
+      annotations:
+        checksum/opa-policy: {{ .Values.gateway.opa.policy | sha256sum }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9100"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: {{ include "llm-stack.serviceAccountName" . }}
+      {{- include "llm-stack.imagePullSecrets" . | nindent 6 }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: traefik
+          image: {{ include "llm-stack.image" (dict "image" .Values.gateway.traefik.image "global" .Values.global) }}
+          imagePullPolicy: {{ .Values.gateway.traefik.image.pullPolicy | default .Values.global.imagePullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          args:
+            - "--api.dashboard=false"
+            - "--providers.kubernetesingress"
+            - "--entrypoints.web.address=:8080"
+            - "--entrypoints.websecure.address=:8443"
+            - "--entrypoints.metrics.address=:9100"
+            - "--metrics.prometheus=true"
+            - "--metrics.prometheus.entrypoint=metrics"
+            - "--accesslog=true"
+            - "--accesslog.format=json"
+            - "--log.level=INFO"
+          ports:
+            - name: web
+              containerPort: 8080
+            - name: websecure
+              containerPort: 8443
+            - name: metrics
+              containerPort: 9100
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: web
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: web
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources:
+            {{- toYaml .Values.gateway.traefik.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+        {{- if .Values.gateway.opa.enabled }}
+        - name: opa
+          image: {{ include "llm-stack.image" (dict "image" .Values.gateway.opa.image "global" .Values.global) }}
+          imagePullPolicy: {{ .Values.gateway.opa.image.pullPolicy | default .Values.global.imagePullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          args:
+            - "run"
+            - "--server"
+            - "--addr=0.0.0.0:8181"
+            - "--diagnostic-addr=0.0.0.0:8282"
+            - "--log-level=info"
+            - "/policies/authz.rego"
+          ports:
+            - name: opa
+              containerPort: 8181
+            - name: opa-diag
+              containerPort: 8282
+          livenessProbe:
+            httpGet:
+              path: /health?plugins&bundles
+              port: opa-diag
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health?plugins&bundles
+              port: opa-diag
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.gateway.opa.resources | nindent 12 }}
+          volumeMounts:
+            - name: opa-policy
+              mountPath: /policies
+              readOnly: true
+        {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        {{- if .Values.gateway.opa.enabled }}
+        - name: opa-policy
+          configMap:
+            name: {{ include "llm-stack.fullname" . }}-opa-policy
+        {{- end }}
+{{- end }}

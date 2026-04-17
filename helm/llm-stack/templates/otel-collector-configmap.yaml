@@ -1,0 +1,147 @@
+{{- if .Values.observability.otelCollector.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-otel-config
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "otel-collector" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+data:
+  collector-config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: llm-stack
+              scrape_interval: 30s
+              kubernetes_sd_configs:
+                - role: pod
+                  namespaces:
+                    names:
+                      - {{ .Release.Namespace }}
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+                  action: keep
+                  regex: "true"
+    processors:
+      batch:
+        timeout: 10s
+      memory_limiter:
+        check_interval: 5s
+        limit_percentage: 80
+        spike_limit_percentage: 25
+      resource:
+        attributes:
+          - key: deployment.environment
+            value: {{ .Release.Namespace }}
+            action: upsert
+          - key: service.namespace
+            value: {{ .Release.Namespace }}
+            action: upsert
+    exporters:
+      prometheusremotewrite:
+        endpoint: "{{ .Values.observability.otelCollector.exporters.prometheus.endpoint }}/api/v1/write"
+        tls:
+          insecure: true
+      loki:
+        endpoint: "{{ .Values.observability.otelCollector.exporters.loki.endpoint }}"
+      otlp/tempo:
+        endpoint: "{{ .Values.observability.otelCollector.exporters.otlp.endpoint }}"
+        tls:
+          insecure: {{ .Values.observability.otelCollector.exporters.otlp.insecure }}
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, batch, resource]
+          exporters: [otlp/tempo]
+        metrics:
+          receivers: [otlp, prometheus]
+          processors: [memory_limiter, batch, resource]
+          exporters: [prometheusremotewrite]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, batch, resource]
+          exporters: [loki]
+      telemetry:
+        metrics:
+          address: 0.0.0.0:8888
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-otel
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "otel-collector" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      {{- include "llm-stack.componentSelectorLabels" (dict "component" "otel-collector" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "llm-stack.componentLabels" (dict "component" "otel-collector" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "llm-stack.serviceAccountName" . }}
+      {{- include "llm-stack.imagePullSecrets" . | nindent 6 }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: otel-collector
+          image: {{ include "llm-stack.image" (dict "image" .Values.observability.otelCollector.image "global" .Values.global) }}
+          imagePullPolicy: {{ .Values.observability.otelCollector.image.pullPolicy | default .Values.global.imagePullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          args:
+            - "--config=/etc/otel/collector-config.yaml"
+          ports:
+            - name: otlp-grpc
+              containerPort: 4317
+            - name: otlp-http
+              containerPort: 4318
+            - name: metrics
+              containerPort: 8888
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          resources:
+            {{- toYaml .Values.observability.otelCollector.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otel
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "llm-stack.fullname" . }}-otel-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-otel
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "otel-collector" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: otlp-grpc
+    - name: otlp-http
+      port: 4318
+      targetPort: otlp-http
+    - name: metrics
+      port: 8888
+      targetPort: metrics
+  selector:
+    {{- include "llm-stack.componentSelectorLabels" (dict "component" "otel-collector" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+{{- end }}

@@ -1,0 +1,56 @@
+# ----------------------------------------------------------------------------
+# Dev sandbox override values
+#
+# Smaller footprint suitable for engineering testing. Not for customer use.
+# ----------------------------------------------------------------------------
+
+inference:
+  replicaCount: 1
+  model:
+    name: "microsoft/Phi-3-mini-4k-instruct"
+    maxModelLen: 4096
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+      memory: "16Gi"
+      cpu: "4"
+    requests:
+      nvidia.com/gpu: 1
+      memory: "8Gi"
+      cpu: "2"
+  autoscaling:
+    enabled: false
+  pdb:
+    enabled: false
+
+vectorDb:
+  replicaCount: 1
+  persistence:
+    size: 20Gi
+  resources:
+    limits:
+      memory: "2Gi"
+      cpu: "1"
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+
+gateway:
+  traefik:
+    replicaCount: 1
+    service:
+      type: ClusterIP
+  ingress:
+    enabled: false
+
+observability:
+  otelCollector:
+    enabled: true
+  serviceMonitor:
+    enabled: false
+
+externalSecrets:
+  enabled: false
+
+networkPolicy:
+  enabled: false

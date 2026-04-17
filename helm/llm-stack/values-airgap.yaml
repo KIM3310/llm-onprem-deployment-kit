@@ -1,0 +1,81 @@
+# ----------------------------------------------------------------------------
+# Airgap override values
+#
+# Use with:
+#   helm upgrade --install llm-stack ./helm/llm-stack \
+#     -f values.yaml -f values-airgap.yaml
+# ----------------------------------------------------------------------------
+
+global:
+  # Replace with the customer's private registry FQDN.
+  imageRegistry: registry.customer.internal/llm-stack
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: private-registry-credentials
+
+# Pin every image to its mirrored path under the private registry.
+inference:
+  image:
+    repository: vllm-openai
+    tag: "v0.4.3"
+  model:
+    # Model weights are staged on a PVC mounted into the pod; no HF Hub calls.
+    name: ""
+    modelPath: "/models/llama-3.1-8b-instruct"
+  args:
+    extra:
+      - "--trust-remote-code=false"
+      - "--disable-log-requests"
+      - "--download-dir=/models/cache"
+  modelVolume:
+    enabled: true
+    claimName: "llm-model-cache"
+  env:
+    - name: HF_HUB_OFFLINE
+      value: "1"
+    - name: TRANSFORMERS_OFFLINE
+      value: "1"
+
+vectorDb:
+  image:
+    repository: qdrant
+    tag: "v1.9.2"
+  persistence:
+    size: 500Gi
+
+gateway:
+  traefik:
+    image:
+      repository: traefik
+      tag: "v3.0.3"
+  opa:
+    image:
+      repository: opa
+      tag: "0.65.0-envoy"
+
+observability:
+  otelCollector:
+    image:
+      repository: opentelemetry-collector-contrib
+      tag: "0.100.0"
+    # Point at customer-internal observability stack.
+    exporters:
+      prometheus:
+        endpoint: "prom.obs.internal.customer.example:9090"
+      loki:
+        endpoint: "http://loki.obs.internal.customer.example/loki/api/v1/push"
+      otlp:
+        endpoint: "tempo.obs.internal.customer.example:4317"
+        insecure: false
+
+externalSecrets:
+  secretStoreRef:
+    name: vault-internal
+    kind: ClusterSecretStore
+
+networkPolicy:
+  enabled: true
+  # Only the customer's ingress namespace may reach the gateway.
+  allowedIngressNamespaces:
+    - ingress-system
+    - monitoring

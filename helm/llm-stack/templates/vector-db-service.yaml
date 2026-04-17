@@ -1,0 +1,40 @@
+{{- if .Values.vectorDb.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-qdrant
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+spec:
+  type: {{ .Values.vectorDb.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.vectorDb.service.httpPort }}
+      targetPort: http
+      protocol: TCP
+    - name: grpc
+      port: {{ .Values.vectorDb.service.grpcPort }}
+      targetPort: grpc
+      protocol: TCP
+  selector:
+    {{- include "llm-stack.componentSelectorLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "llm-stack.fullname" . }}-qdrant-headless
+  labels:
+    {{- include "llm-stack.componentLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+    - name: http
+      port: {{ .Values.vectorDb.service.httpPort }}
+      targetPort: http
+    - name: grpc
+      port: {{ .Values.vectorDb.service.grpcPort }}
+      targetPort: grpc
+  selector:
+    {{- include "llm-stack.componentSelectorLabels" (dict "component" "vector-db" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
+{{- end }}

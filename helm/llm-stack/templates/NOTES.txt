@@ -1,0 +1,47 @@
+llm-stack {{ .Chart.AppVersion }} has been installed.
+
+Release:    {{ .Release.Name }}
+Namespace:  {{ .Release.Namespace }}
+Chart:      {{ .Chart.Name }}-{{ .Chart.Version }}
+
+--------------------------------------------------------------------------------
+Next steps
+--------------------------------------------------------------------------------
+
+1. Check component readiness:
+
+   kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+2. Port-forward the gateway for a quick local smoke test:
+
+   kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "llm-stack.fullname" . }}-gateway 8443:{{ .Values.gateway.traefik.service.port }}
+
+3. Issue an inference request against the OpenAI-compatible endpoint:
+
+   curl -k https://localhost:8443/v1/chat/completions \
+     -H 'Authorization: Bearer <your-token>' \
+     -H 'Content-Type: application/json' \
+     -d '{"model":"{{ .Values.inference.model.name }}","messages":[{"role":"user","content":"hello"}]}'
+
+4. View the full deployment runbook:
+
+   docs/runbooks/initial-deploy.md
+
+{{- if .Values.gateway.ingress.enabled }}
+
+5. The gateway Ingress exposes:
+
+   https://{{ .Values.gateway.ingress.hostname }}/
+
+   Ensure DNS resolves this hostname to the internal load balancer VIP.
+{{- end }}
+
+{{- if .Values.externalSecrets.enabled }}
+
+6. External Secrets are configured to pull from `{{ .Values.externalSecrets.secretStoreRef.name }}`
+   ({{ .Values.externalSecrets.secretStoreRef.kind }}). Verify with:
+
+   kubectl -n {{ .Release.Namespace }} get externalsecrets
+{{- end }}
+
+For incident response, consult docs/runbooks/incident-response.md.

@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/KIM3310/llm-onprem-deployment-kit/helm/llm-stack/values.schema.json",
+  "title": "llm-stack values",
+  "description": "JSON schema for values.yaml. Consumed optionally as an editor aid; Helm does not require it.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "global": {
+      "type": "object",
+      "properties": {
+        "imageRegistry": { "type": "string" },
+        "imagePullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"] },
+        "imagePullSecrets": {
+          "type": "array",
+          "items": { "type": "object", "properties": { "name": { "type": "string" } }, "required": ["name"] }
+        },
+        "storageClass": { "type": "string" }
+      }
+    },
+    "inference": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "replicaCount": { "type": "integer", "minimum": 1 },
+        "image": {
+          "type": "object",
+          "properties": {
+            "repository": { "type": "string", "minLength": 1 },
+            "tag": { "type": "string", "minLength": 1 },
+            "pullPolicy": { "type": "string" }
+          },
+          "required": ["repository", "tag"]
+        },
+        "model": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "modelPath": { "type": "string" },
+            "maxModelLen": { "type": "integer", "minimum": 512 },
+            "quantization": { "type": ["string", "null"], "enum": [null, "awq", "gptq", "fp8"] }
+          }
+        },
+        "autoscaling": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minReplicas": { "type": "integer", "minimum": 1 },
+            "maxReplicas": { "type": "integer", "minimum": 1 },
+            "metricName": { "type": "string" },
+            "targetAverageValue": { "type": "integer" }
+          }
+        }
+      },
+      "required": ["enabled", "replicaCount", "image"]
+    },
+    "vectorDb": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "engine": { "type": "string", "enum": ["qdrant", "weaviate", "milvus", "pgvector"] },
+        "replicaCount": { "type": "integer", "minimum": 1 },
+        "persistence": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "size": { "type": "string" },
+            "storageClass": { "type": "string" }
+          }
+        }
+      },
+      "required": ["enabled", "engine"]
+    },
+    "gateway": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "traefik": { "type": "object" },
+        "opa": { "type": "object" },
+        "ingress": { "type": "object" }
+      },
+      "required": ["enabled"]
+    },
+    "observability": {
+      "type": "object",
+      "properties": {
+        "otelCollector": { "type": "object" },
+        "serviceMonitor": { "type": "object" }
+      }
+    },
+    "externalSecrets": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "secretStoreRef": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "kind": { "type": "string", "enum": ["SecretStore", "ClusterSecretStore"] }
+          },
+          "required": ["name", "kind"]
+        },
+        "refreshInterval": { "type": "string" },
+        "secrets": { "type": "array" }
+      },
+      "required": ["enabled"]
+    },
+    "networkPolicy": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "allowedIngressNamespaces": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "required": ["inference", "vectorDb", "gateway"]
+}
