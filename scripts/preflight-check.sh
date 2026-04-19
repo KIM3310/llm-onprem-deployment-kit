@@ -100,7 +100,7 @@ else
   log_ok "${node_count} nodes available."
 fi
 
-zones=$(kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.labels.topology\.kubernetes\.io/zone}{"\n"}{end}' 2>/dev/null | sort -u | grep -v '^$' | wc -l | tr -d ' ')
+zones=$(kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.labels.topology\.kubernetes\.io/zone}{"\n"}{end}' 2>/dev/null | sort -u | grep -cve '^$')
 if [[ "${zones}" -lt 2 ]]; then
   warn "Nodes span only ${zones} zone(s). HA recommends 2+ zones."
 else
