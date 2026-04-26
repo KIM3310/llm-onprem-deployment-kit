@@ -42,7 +42,18 @@ jobs:
         working-directory: ${{ matrix.module }}
 
       - name: Terraform init (no backend)
-        run: terraform init -backend=false -input=false -no-color
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            echo "terraform init attempt $attempt/3"
+            if terraform init -backend=false -input=false -no-color; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+            sleep $((attempt * 10))
+          done
         working-directory: ${{ matrix.module }}
 
       - name: Terraform validate

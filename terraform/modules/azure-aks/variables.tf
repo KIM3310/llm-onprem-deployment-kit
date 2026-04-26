@@ -19,7 +19,7 @@ variable "location" {
 }
 
 variable "resource_group_name" {
-  description = "Name of the existing resource group to deploy into. If null, a new one is created as ${name_prefix}-rg."
+  description = "Name of the existing resource group to deploy into. If null, a new one is created with the module name prefix and -rg suffix."
   type        = string
   default     = null
 }

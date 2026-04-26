@@ -53,10 +53,10 @@ module "aks_dev" {
   enable_acr       = false
 
   tags = {
-    "managed-by"   = "terraform"
-    "stack"        = "llm-onprem-deployment-kit"
-    "environment"  = "dev-sandbox"
-    "cost-center"  = "engineering"
+    "managed-by"  = "terraform"
+    "stack"       = "llm-onprem-deployment-kit"
+    "environment" = "dev-sandbox"
+    "cost-center" = "engineering"
   }
 }
 

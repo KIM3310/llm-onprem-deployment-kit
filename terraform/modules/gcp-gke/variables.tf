@@ -115,13 +115,13 @@ variable "system_node_pool" {
 variable "gpu_node_pool" {
   description = "GPU node pool configuration."
   type = object({
-    enabled          = bool
-    machine_type     = string
-    accelerator_type = string
+    enabled           = bool
+    machine_type      = string
+    accelerator_type  = string
     accelerator_count = number
-    disk_size_gb     = number
-    min_count        = number
-    max_count        = number
+    disk_size_gb      = number
+    min_count         = number
+    max_count         = number
     node_taints = list(object({
       key    = string
       value  = string
@@ -129,13 +129,13 @@ variable "gpu_node_pool" {
     }))
   })
   default = {
-    enabled          = true
-    machine_type     = "a2-highgpu-1g"
-    accelerator_type = "nvidia-tesla-a100"
+    enabled           = true
+    machine_type      = "a2-highgpu-1g"
+    accelerator_type  = "nvidia-tesla-a100"
     accelerator_count = 1
-    disk_size_gb     = 256
-    min_count        = 1
-    max_count        = 4
+    disk_size_gb      = 256
+    min_count         = 1
+    max_count         = 4
     node_taints = [
       {
         key    = "nvidia.com/gpu"

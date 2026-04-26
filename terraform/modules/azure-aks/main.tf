@@ -299,17 +299,17 @@ resource "azurerm_role_assignment" "aks_acr_pull" {
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "this" {
-  count                       = var.enable_key_vault ? 1 : 0
-  name                        = "${substr(replace(var.name_prefix, "-", ""), 0, 14)}kv${random_id.suffix.hex}"
-  location                    = local.rg_resolved.location
-  resource_group_name         = local.rg_resolved.name
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  sku_name                    = var.key_vault_sku
-  purge_protection_enabled    = true
-  soft_delete_retention_days  = 90
-  enable_rbac_authorization   = true
+  count                         = var.enable_key_vault ? 1 : 0
+  name                          = "${substr(replace(var.name_prefix, "-", ""), 0, 14)}kv${random_id.suffix.hex}"
+  location                      = local.rg_resolved.location
+  resource_group_name           = local.rg_resolved.name
+  tenant_id                     = data.azurerm_client_config.current.tenant_id
+  sku_name                      = var.key_vault_sku
+  purge_protection_enabled      = true
+  soft_delete_retention_days    = 90
+  enable_rbac_authorization     = true
   public_network_access_enabled = false
-  tags                        = local.base_tags
+  tags                          = local.base_tags
 
   network_acls {
     bypass         = "AzureServices"

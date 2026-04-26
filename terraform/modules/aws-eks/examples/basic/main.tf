@@ -37,10 +37,10 @@ module "eks" {
   }
 
   tags = {
-    "managed-by"   = "terraform"
-    "stack"        = "llm-onprem-deployment-kit"
-    "environment"  = var.environment
-    "owner"        = "platform-sre"
+    "managed-by"  = "terraform"
+    "stack"       = "llm-onprem-deployment-kit"
+    "environment" = var.environment
+    "owner"       = "platform-sre"
   }
 }
 
