@@ -284,3 +284,11 @@ This kit is part of a wider stack for shipping LLM applications into enterprise 
 [MIT](./LICENSE) (c) 2026 Doeon Kim.
 
 This repository bundles references to third-party container images (vLLM, Qdrant, Traefik, OPA, OpenTelemetry Collector) which retain their own upstream licenses. See [`docs/runbooks/airgap-image-mirror.md`](./docs/runbooks/airgap-image-mirror.md) for the full image inventory.
+
+## Cloud + AI Architecture
+
+This repository includes a neutral cloud and AI engineering blueprint that maps the current proof surface to runtime boundaries, data contracts, model-risk controls, deployment posture, and validation hooks.
+
+- [Cloud + AI architecture blueprint](docs/cloud-ai-architecture.md)
+- [Machine-readable architecture manifest](architecture/blueprint.json)
+- Validation command: `python3 scripts/validate_architecture_blueprint.py`
