@@ -13,20 +13,20 @@ terraform {
   required_providers {
     azurerm = {
       source                = "hashicorp/azurerm"
-      version               = "~> 3.110"
+      version               = "~> 4.71"
       configuration_aliases = []
     }
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.50"
+      version = "~> 6.43"
     }
     google = {
       source  = "hashicorp/google"
-      version = "~> 5.35"
+      version = "~> 7.30"
     }
     google-beta = {
       source  = "hashicorp/google-beta"
-      version = "~> 5.35"
+      version = "~> 7.30"
     }
   }
 }
