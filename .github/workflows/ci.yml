@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-gates:
+    name: repository gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Validate repository surface
+        run: python3 scripts/validate_repository_surface.py
+
+      - name: Validate architecture blueprint
+        run: python3 scripts/validate_architecture_blueprint.py
+
+      - name: Shell syntax check
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find scripts tests examples -type f -name '*.sh' 2>/dev/null || true)
+          if (( ${#files[@]} == 0 )); then
+            echo "No shell scripts found."
+            exit 0
+          fi
+          for file in "${files[@]}"; do
+            bash -n "$file"
+          done
