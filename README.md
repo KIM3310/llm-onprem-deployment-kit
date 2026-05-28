@@ -31,6 +31,10 @@ A private/hybrid LLM deployment kit for organizations that cannot send sensitive
 - **Verification:** Run `make validate`; targeted checks are `make tf-validate`, `make helm-lint`, and `make shell-lint`.
 - **Commercial read:** This is the paid deployment/security-review story for enterprise LLM customers after a pilot is sold.
 
+## Commercialization Playbook
+
+- [Monetization and GTM playbook](docs/monetization-playbook.md) maps the repository to buyer segments, offer ladder, pricing hypotheses, proof gates, and risk boundaries.
+
 ## Table of Contents
 
 1. [Why this exists](#why-this-exists)
