@@ -12,6 +12,18 @@
 
 ---
 
+## Product and Review Surface
+
+A private/hybrid LLM deployment kit for organizations that cannot send sensitive workloads to uncontrolled hosted endpoints.
+
+| Lens | Definition |
+|---|---|
+| Buyer or user | Regulated enterprises, internal AI platform teams, security architects, and infrastructure operators. |
+| Commercial route | Sell readiness reviews, Terraform/Helm setup, private deployment runbooks, and compliance-aligned operating workshops. |
+| Review signal | Terraform, Helm, air-gapped notes, compliance runbooks, model-routing boundaries, and infrastructure controls. |
+| Safety boundary | Templates are a deployment starting point; real environments need customer-specific threat modeling, secrets, IAM, and change control. |
+| Fast proof | Inspect the infra modules, run validation commands where available, and review the operating notes. |
+
 ## Table of Contents
 
 1. [Why this exists](#why-this-exists)
