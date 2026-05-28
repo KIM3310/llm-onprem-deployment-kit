@@ -24,6 +24,13 @@ A private/hybrid LLM deployment kit for organizations that cannot send sensitive
 | Safety boundary | Templates are a deployment starting point; real environments need customer-specific threat modeling, secrets, IAM, and change control. |
 | Fast proof | Inspect the infra modules, run validation commands where available, and review the operating notes. |
 
+## Reviewer Fast Path
+
+- **First minute:** Read the reference architecture, then jump to compliance mappings and airgap runbooks.
+- **Local demo:** Use dry-run infrastructure validation rather than deploying by default.
+- **Verification:** Run `make validate`; targeted checks are `make tf-validate`, `make helm-lint`, and `make shell-lint`.
+- **Commercial read:** This is the paid deployment/security-review story for enterprise LLM customers after a pilot is sold.
+
 ## Table of Contents
 
 1. [Why this exists](#why-this-exists)
