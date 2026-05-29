@@ -1,37 +1,33 @@
-# Reviewer Evidence Map - llm-onprem-deployment-kit
+# Review Guide - llm-onprem-deployment-kit
 
-Updated: 2026-05-29
+Updated: 2026-05-30
 
-This document is the short path for a technical reviewer, engineering leader, product evaluator, or buyer who wants to understand what this repository proves without wandering through every file.
+Use this page as the short path through the repository. It keeps the review grounded in the code, docs, commands, and boundaries that are already present.
 
-## One-Line Proof
+## Summary
 
-**B2B private AI deployment.** Terraform/Helm/private deployment kit for LLM workloads that cannot use uncontrolled hosted endpoints.
-
-## Audience and Commercial Angle
-
-| Lens | Answer |
+| Field | Notes |
 |---|---|
-| Primary reviewer | Regulated enterprises, AI vendors, platform teams, and security architects. |
-| Technical signal | Can the project be explained, verified, bounded, and extended like a real product surface? |
-| Buyer signal | Is there a narrow operational pain, a runnable proof path, and a risk-aware pilot shape? |
-| Stack signal | Terraform, Helm |
+| Lane | B2B private AI deployment |
+| Core idea | Terraform/Helm/private deployment kit for LLM workloads that cannot use uncontrolled hosted endpoints. |
+| Primary reader | Regulated enterprises, AI vendors, platform teams, and security architects. |
+| Stack | Terraform, Helm |
 
-## Seven-Minute Review Route
+## Open First
 
-1. Read the README `Product and Review Surface` and `Reviewer Fast Path` sections.
-2. Open `docs/monetization-playbook.md` to understand the buyer, offer ladder, and GTM hypothesis.
-3. Run or inspect the strongest local quality gate below.
-4. Inspect CI workflow definitions and test fixtures before deeper implementation review.
-5. Check the risk boundaries so claims stay credible and not overextended.
+1. Start with the README fast path and architecture section.
+2. Open `docs/monetization-playbook.md` only when reviewing the product or service angle.
+3. Check the commands below before making claims about quality.
+4. Skim the CI workflows and fixture data before deeper implementation review.
+5. Read the boundaries section before presenting the project externally.
 
-## Verification Commands
+## Checks
 
 | Purpose | Command |
 |---|---|
 | Review gate | `Review README fast path, CI workflow, and documented demo artifacts` |
 
-## CI and Automation Surface
+## CI
 
 - .github/workflows/architecture-blueprint.yml
 - .github/workflows/ci.yml
@@ -43,7 +39,7 @@ This document is the short path for a technical reviewer, engineering leader, pr
 - .github/workflows/shellcheck.yml
 - .github/workflows/terraform-validate.yml
 
-## Evidence Inventory
+## Evidence
 
 - infrastructure-as-code review surface
 - Kubernetes packaging surface
@@ -51,26 +47,22 @@ This document is the short path for a technical reviewer, engineering leader, pr
 - Terraform/Helm/Shell checks pass
 - Runbooks are current
 
-## Commercialization Snapshot
+## Commercial Notes
 
-| Offer | Pricing hypothesis |
+| Possible offer | Working price assumption |
 |---|---|
 | Readiness review | $10k-$25k readiness review |
 | Private deployment setup | $50k-$150k deployment package |
 | Airgap runbook and compliance workshop | $8k-$30k/month platform support |
 
-## Risk Boundaries
+## Boundaries
 
 - Templates are not certifications
 - Customer threat model required
 - Secrets/IAM must be customer-specific
 
-## Metrics That Matter
+## Useful Metrics
 
 - Deployment lead time
 - Control mapping coverage
 - Runbook completeness
-
-## Review Verdict
-
-This repository should be evaluated as part of the broader KIM3310 portfolio: it is strongest when the reviewer sees the link between a concrete implementation, a documented verification path, and an externally credible operating story.
