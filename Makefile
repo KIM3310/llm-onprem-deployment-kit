@@ -18,6 +18,7 @@ HELM             ?= helm
 KUBECTL          ?= kubectl
 SHELLCHECK       ?= shellcheck
 YAMLLINT         ?= yamllint
+PYTHON           ?= python3
 
 REPO_ROOT        := $(shell pwd)
 TF_MODULE_DIRS   := terraform/modules/azure-aks terraform/modules/aws-eks terraform/modules/gcp-gke
@@ -62,7 +63,11 @@ help:
 # ----------------------------------------------------------------------------
 # Validation
 # ----------------------------------------------------------------------------
-.PHONY: validate fmt tf-validate helm-lint shell-lint
+.PHONY: verify validate fmt tf-validate helm-lint shell-lint
+
+verify:
+	$(PYTHON) scripts/validate_repository_surface.py
+	$(PYTHON) scripts/validate_architecture_blueprint.py
 
 validate: tf-validate helm-lint shell-lint
 	@echo "[OK] All validation checks passed."
