@@ -2,7 +2,7 @@
 
 Updated: 2026-05-30
 
-This note specializes the repository for revenue. It combines product strategy, UX design, behavioral economics, and neuroscience-informed attention and working-memory design in a practical way: reduce confusion, build trust, help the right user act, and avoid manipulative conversion patterns.
+This note specializes the repository for service launch. It combines product strategy, UX design, behavioral economics, and neuroscience-informed attention and working-memory design in a practical way: reduce confusion, build trust, help the right user act, and avoid manipulative conversion patterns.
 
 ## Commercial Focus
 
@@ -12,7 +12,7 @@ This note specializes the repository for revenue. It combines product strategy, 
 | Lane | B2B private AI deployment |
 | Primary buyer or user | Regulated enterprises, AI vendors, platform teams, and security architects. |
 | Value wedge | Terraform/Helm/private deployment kit for LLM workloads that cannot use uncontrolled hosted endpoints. |
-| Revenue model | Paid diagnostic, fixed-scope pilot, and retained operating review |
+| Service model | Paid diagnostic, fixed-scope pilot, and retained operating review |
 | Operating note | Start with a small risk-reversing review, then convert to a controlled pilot with success metrics. |
 | Best channel | Founder-led outreach, one-page scorecards, recorded demos, and domain-specific checklists. |
 
@@ -53,9 +53,9 @@ This note specializes the repository for revenue. It combines product strategy, 
 - Pilot: Private deployment setup ($50k-$150k deployment package) using buyer-approved data and named operators.
 - Recurring layer: Airgap runbook and compliance workshop ($8k-$30k/month platform support) for monitoring, governance, support, or managed review.
 
-## Pricing Frame
+## Scope Frame
 
-- Anchor price to the buyer's existing cost: hours lost, incidents, review delay, audit exposure, or manual handoff.
+- Anchor scope to the buyer's existing cost: hours lost, incidents, review delay, audit exposure, or manual handoff.
 - Use the first offer as risk reversal, not as a race to the bottom.
 - Put Deployment lead time on the pilot scorecard.
 
@@ -67,8 +67,8 @@ This note specializes the repository for revenue. It combines product strategy, 
 
 ## Ethical Guardrails
 
-- No fake users, fake logos, fake revenue, fake benchmarks, or unverifiable endorsements.
-- No urgency timers, hidden opt-outs, forced continuity, or confusing pricing.
+- No fake users, fake logos, fake financial outcomes, fake benchmarks, or unverifiable endorsements.
+- No urgency timers, hidden opt-outs, forced continuity, or confusing scope.
 - Conversion prompts should come after value or evidence, not before.
 - Data collection should be minimal, visible, and tied to product value.
 - Templates are not certifications
