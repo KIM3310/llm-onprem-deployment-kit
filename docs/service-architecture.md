@@ -1,6 +1,6 @@
 # Service Architecture - llm-onprem-deployment-kit
 
-This document defines the deployment and resource plan for turning this repository into a buyer-reviewable service. It intentionally avoids public public financial assumptions, public financial guesses, or contract assumptions.
+This document defines the deployment and resource plan for turning this repository into a buyer-reviewable service. It intentionally avoids public financial assumptions, public financial guesses, or contract assumptions.
 
 ## Commercial Role
 
@@ -45,6 +45,15 @@ Visitor or operator
 - buyer cloud credentials via least privilege
 - model provider or on-prem endpoint credentials
 - registry credentials
+
+## Revenue Channel Architecture
+
+- **Primary channel:** B2B diagnostics and pilots
+- **Monetization route:** Paid readiness review, scoped proof-of-value pilot, then implementation or governance support.
+- **Acquisition motion:** Portfolio proof, GitHub evidence, direct outreach to AI, data, platform, and security leaders.
+- **Activation path:** Confirm workflow owner, approved sample data, success criteria, and minimum cloud resources before connecting real integrations.
+- **Margin control:** Keep the pilot fixed-scope, reuse templates and evidence packs, set spend limits, and add persistent infrastructure only after buyer scope is approved.
+- **Public boundary:** Keep revenue, pricing, and contract assumptions in private planning; this repository publishes service structure, resource needs, and technical proof only.
 
 ## Cost and Risk Controls
 
