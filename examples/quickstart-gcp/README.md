@@ -10,7 +10,7 @@ End-to-end guide to deploying the LLM application stack on Google GKE in under a
 - Helm 3.12+ installed.
 - kubectl installed.
 
-Estimated total GCP cost for a week of running this quickstart: $120-180 (1x a2-highgpu-1g + 3x e2-standard-4 + NAT + Secret Manager + Private Service Connect).
+Before running this quickstart, review the Google Cloud pricing calculator for the selected region, GPU node, standard nodes, NAT, Secret Manager, and Private Service Connect. Keep the environment short-lived unless a buyer-approved pilot scope requires longer testing.
 
 ## Step 1 — Provision GKE cluster
 

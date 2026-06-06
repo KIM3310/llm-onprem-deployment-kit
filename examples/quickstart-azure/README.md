@@ -10,7 +10,7 @@ End-to-end guide to deploying the LLM application stack on Azure AKS in under an
 - Helm 3.12+ installed.
 - kubectl installed.
 
-Estimated total Azure cost for a week of running this quickstart: $120-180 (1x GPU node + 3x standard nodes + NAT gateway + Key Vault + Private Endpoints).
+Before running this quickstart, review the Azure pricing calculator for the selected region, GPU node, standard nodes, NAT gateway, Key Vault, and Private Endpoints. Keep the environment short-lived unless a buyer-approved pilot scope requires longer testing.
 
 ## Step 1 — Provision AKS cluster
 

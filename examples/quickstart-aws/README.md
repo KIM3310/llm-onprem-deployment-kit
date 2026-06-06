@@ -11,7 +11,7 @@ End-to-end guide to deploying the LLM application stack on Amazon EKS in under a
 - kubectl installed.
 - `eksctl` (optional, for troubleshooting).
 
-Estimated total AWS cost for a week of running this quickstart: $130-200 (1x p3.2xlarge + 3x m5.large + NAT Gateway + Secrets Manager + VPC Endpoints).
+Before running this quickstart, review the AWS pricing calculator for the selected region, GPU node, standard nodes, NAT Gateway, Secrets Manager, and VPC Endpoints. Keep the environment short-lived unless a buyer-approved pilot scope requires longer testing.
 
 ## Step 1 — Provision EKS cluster
 
