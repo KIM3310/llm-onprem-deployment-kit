@@ -1,5 +1,10 @@
 # Product Operating Model
 
+## Public Demo
+
+- URL: https://kim3310.github.io/llm-onprem-deployment-kit/
+- Scope: credential-free synthetic demo surface for quick reviewer inspection.
+
 Repository: `llm-onprem-deployment-kit`
 Last reviewed: 2026-06-03 KST
 

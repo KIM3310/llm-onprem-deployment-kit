@@ -1,5 +1,10 @@
 # llm-onprem-deployment-kit
 
+## Live Demo
+
+- [Open the public GitHub Pages demo](https://kim3310.github.io/llm-onprem-deployment-kit/)
+- Scope: credential-free, synthetic-data demo for reviewers and evaluators.
+
 > An opinionated, enterprise-grade deployment kit for running LLM applications in private, hybrid, or airgapped cloud environments. Bring-your-own-infrastructure, BYO-model, security-and-compliance by default.
 
 [![Terraform Validate](https://github.com/KIM3310/llm-onprem-deployment-kit/actions/workflows/terraform-validate.yml/badge.svg)](https://github.com/KIM3310/llm-onprem-deployment-kit/actions/workflows/terraform-validate.yml)
