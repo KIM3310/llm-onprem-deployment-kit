@@ -51,9 +51,9 @@ Use this page as the short path through the repository. It keeps the review grou
 
 | Possible offer | Working scope assumption |
 |---|---|
-| Readiness review | $10k-$25k readiness review |
-| Private deployment setup | $50k-$150k deployment package |
-| Airgap runbook and compliance workshop | $8k-$30k/month platform support |
+| Readiness review | Scope after buyer intake |
+| Private deployment setup | Scope after buyer intake |
+| Airgap runbook and compliance workshop | Scope after buyer intake |
 
 ## Boundaries
 

@@ -49,9 +49,9 @@ This note specializes the repository for service launch. It combines product str
 
 ## Conversion Path
 
-- Risk-reversing entry: Readiness review ($10k-$25k readiness review) with one acceptance metric.
-- Pilot: Private deployment setup ($50k-$150k deployment package) using buyer-approved data and named operators.
-- Recurring layer: Airgap runbook and compliance workshop ($8k-$30k/month platform support) for monitoring, governance, support, or managed review.
+- Risk-reversing entry: Readiness review (scope after buyer intake) with one acceptance metric.
+- Pilot: Private deployment setup (scope after buyer intake) using buyer-approved data and named operators.
+- Recurring layer: Airgap runbook and compliance workshop (scope after buyer intake) for monitoring, governance, support, or managed review.
 
 ## Scope Frame
 

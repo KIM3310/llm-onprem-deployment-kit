@@ -12,7 +12,7 @@ This is the buyer-ready version of the repository. It turns the technical proof 
 | Buyer | Regulated enterprises, AI vendors, platform teams, and security architects. |
 | Pain wedge | Terraform/Helm/private deployment kit for LLM workloads that cannot use uncontrolled hosted endpoints. |
 | Front-door offer | Readiness review |
-| Entry scope | $10k-$25k readiness review |
+| Entry scope | Scope after buyer intake |
 | Proof before pitch | make validate passes |
 | Next buyer action | Review one proof artifact, then choose diagnostic, workshop, pilot, support, or revival path. |
 
@@ -20,9 +20,9 @@ This is the buyer-ready version of the repository. It turns the technical proof 
 
 | Offer | Scope assumption | Buyer-facing scope |
 |---|---|---|
-| Readiness review | $10k-$25k readiness review | Package cloud-by-cloud one-pagers |
-| Private deployment setup | $50k-$150k deployment package | Build airgap demo script |
-| Airgap runbook and compliance workshop | $8k-$30k/month platform support | Offer deployment review |
+| Readiness review | Scope after buyer intake | Package cloud-by-cloud one-pagers |
+| Private deployment setup | Scope after buyer intake | Build airgap demo script |
+| Airgap runbook and compliance workshop | Scope after buyer intake | Offer deployment review |
 
 ## Close Path
 
