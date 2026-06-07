@@ -2,7 +2,7 @@
 
 Updated: 2026-05-30
 
-This note defines what an enterprise buyer, public-sector reviewer, serious user, or technical evaluator can safely infer from this repository today. It is intentionally conservative: public proof is separated from production claims.
+This note defines what an enterprise reviewer, public-sector reviewer, serious user, or technical evaluator can safely infer from this repository today. It is intentionally conservative: public proof is separated from production claims.
 
 ## Scope
 
@@ -10,7 +10,7 @@ This note defines what an enterprise buyer, public-sector reviewer, serious user
 |---|---|
 | Repository | `llm-onprem-deployment-kit` |
 | Lane | B2B private AI deployment |
-| Primary reader or buyer | Regulated enterprises, AI vendors, platform teams, and security architects. |
+| Primary reader or reviewer | Regulated enterprises, AI vendors, platform teams, and security architects. |
 | Core wedge | Terraform/Helm/private deployment kit for LLM workloads that cannot use uncontrolled hosted endpoints. |
 | Stack | Terraform, Helm |
 | Readiness posture | Pilot-ready technical surface; production use requires customer-specific identity, monitoring, data, and support controls. |
@@ -24,7 +24,7 @@ This note defines what an enterprise buyer, public-sector reviewer, serious user
 | Auditability | Keep decision logs, generated reports, CI results, eval outputs, and operator handoff artifacts reviewable. |
 | Observability | Track health checks, latency, error budget, cost, eval pass rate, audit-log completeness, and handoff/report generation status. |
 | Release gate | Review gate: Review README, CI workflow, docs, fixtures, and demo artifacts |
-| Support handoff | Name the owner, escalation path, rollback path, known limits, and review cadence before a paid or production pilot. |
+| Support handoff | Name the owner, escalation path, rollback path, known limits, and review cadence before a production testing. |
 
 ## Verification Surface
 
@@ -48,13 +48,13 @@ This note defines what an enterprise buyer, public-sector reviewer, serious user
 
 - Review README, CI workflow, docs, fixtures, and demo artifacts can be run or the equivalent CI gate is visible.
 - README, review guide, quality notes, service model, and this readiness note agree on the same scope.
-- Demo, fixture, synthetic, or public-data boundaries are explicit before a buyer sees outputs.
+- Demo, fixture, synthetic, or public-data boundaries are explicit before a reviewer sees outputs.
 - A reviewer can identify the first useful outcome without reading implementation details.
 - Production claims stay behind customer-specific validation, access control, monitoring, and support handoff.
 
 ## Integration Path
 
-- Run a synthetic-data walkthrough with the buyer and document the acceptance criteria.
+- Run a synthetic-data walkthrough with the reviewer and document the acceptance criteria.
 - Scope a controlled pilot using approved data, named users, secrets, and rollback paths.
 - Convert the pilot into an operating handoff with monitoring, review cadence, support owner, and renewal metric.
 

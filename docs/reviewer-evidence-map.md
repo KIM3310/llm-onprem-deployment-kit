@@ -47,13 +47,13 @@ Use this page as the short path through the repository. It keeps the review grou
 - Terraform/Helm/Shell checks pass
 - Runbooks are current
 
-## Commercial Notes
+## Review Notes
 
 | Possible offer | Working scope assumption |
 |---|---|
-| Readiness review | Scope after buyer intake |
-| Private deployment setup | Scope after buyer intake |
-| Airgap runbook and compliance workshop | Scope after buyer intake |
+| Readiness review | Scope after reviewer intake |
+| Private deployment setup | Scope after reviewer intake |
+| Airgap runbook and compliance workshop | Scope after reviewer intake |
 
 ## Boundaries
 

@@ -23,8 +23,8 @@ A private/hybrid LLM deployment kit for organizations that cannot send sensitive
 
 | Lens | Definition |
 |---|---|
-| Buyer or user | Regulated enterprises, internal AI platform teams, security architects, and infrastructure operators. |
-| Commercial route | Sell readiness reviews, Terraform/Helm setup, private deployment runbooks, and compliance-aligned operating workshops. |
+| Audience | Regulated enterprises, internal AI platform teams, security architects, and infrastructure operators. |
+| Review path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
 | Review signal | Terraform, Helm, air-gapped notes, compliance runbooks, model-routing boundaries, and infrastructure controls. |
 | Safety boundary | Templates are a deployment starting point; real environments need customer-specific threat modeling, secrets, IAM, and change control. |
 | Fast proof | Inspect the infra modules, run validation commands where available, and review the operating notes. |
@@ -34,20 +34,16 @@ A private/hybrid LLM deployment kit for organizations that cannot send sensitive
 - **First minute:** Read the reference architecture, then jump to compliance mappings and airgap runbooks.
 - **Local demo:** Use dry-run infrastructure validation rather than deploying by default.
 - **Verification:** Run `make validate`; targeted checks are `make tf-validate`, `make helm-lint`, and `make shell-lint`.
-- **Commercial read:** This is the paid deployment/security-review story for enterprise LLM customers after a pilot is sold.
 
 ## Service Launch Playbook
 
-- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to buyer segments, offer ladder, proof gates, proof gates, and risk boundaries.
+- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to review audiences, offer ladder, proof gates, proof gates, and risk boundaries.
 
 ## Review Notes
 
 - [Review guide](docs/reviewer-evidence-map.md) summarizes the project angle, first files to inspect, verification commands, and known boundaries.
 - [Quality notes](docs/quality-gate.md) lists the local checks, CI surface, and release expectations for this repository.
-- [Service growth model](docs/service-growth-model.md) maps the project to an ethical service path, activation loop, scope logic, and growth experiments.
 - [Enterprise readiness notes](docs/enterprise-readiness.md) outlines security, data, operations, integration, and handoff expectations.
-- [Conversion UX model](docs/conversion-ux-model.md) maps the buyer path, behavioral design, UI/UX direction, scope frame, and ethical conversion guardrails.
-- [Commercial offer](docs/commercial-offer.md) packages the repository into a buyer-ready offer ladder, proof gate, outreach angle, and close path.
 
 ## Table of Contents
 
@@ -332,7 +328,7 @@ This repository includes a neutral cloud and AI engineering blueprint that maps 
 
 ## Enterprise Productization
 
-- [Product operating model](docs/product-operating-model.md) defines the buyer, paid wedge, trust boundary, operating checks, and service path for this repository.
+- [Product operating model](docs/product-operating-model.md) defines the reviewer, trust boundary, trust boundary, operating checks, and service path for this repository.
 
 ## Service Architecture
 
