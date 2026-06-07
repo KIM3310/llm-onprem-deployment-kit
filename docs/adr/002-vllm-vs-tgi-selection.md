@@ -16,11 +16,11 @@ The inference engine is the dominant cost center of a production LLM deployment.
 
 Candidates evaluated:
 
-- **vLLM** (University of California, Berkeley origin; broad commercial adoption; vLLM Project).
+- **vLLM** (University of California, Berkeley origin; broad production adoption; vLLM Project).
 - **TGI** (Text Generation Inference, Hugging Face).
 - **Triton Inference Server** with TensorRT-LLM backend (NVIDIA).
 - **llama.cpp** (CPU-first, GGUF; server mode).
-- **Modular MAX / Mojo-based engines** (commercial, early maturity).
+- **Modular MAX / Mojo-based engines** (proprietary, early maturity).
 
 Criteria:
 

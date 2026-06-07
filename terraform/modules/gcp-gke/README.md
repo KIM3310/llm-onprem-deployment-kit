@@ -60,7 +60,7 @@ module "gke" {
 
 - Default: `a2-highgpu-1g` (1x A100 40GB).
 - For higher throughput: `a2-ultragpu-1g` (1x A100 80GB) or `a2-highgpu-8g` (8x A100 40GB).
-- For H100: `a3-highgpu-8g` where available (Seoul and Tokyo have limited capacity; always confirm with Google sales).
+- For H100: `a3-highgpu-8g` where available (Seoul and Tokyo have limited capacity; always confirm with the Google account team).
 - `gpu_driver_version = "LATEST"` lets GKE auto-install the NVIDIA driver.
 
 ## Connecting from a local workstation

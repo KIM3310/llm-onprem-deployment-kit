@@ -80,7 +80,7 @@ Indicative Korea Central list prices (subject to change):
 - GPU pool: 1x NC24ads_A100_v4 approx USD 3,800/month on-demand, approx USD 2,200/month 1-year reserved.
 - Log Analytics (Container Insights): approx USD 150/month for a 3-node cluster with default verbosity.
 
-Always confirm pricing with the customer's Azure account team.
+Always confirm cloud cost assumptions with the customer's Azure account team.
 
 ## Assumptions
 

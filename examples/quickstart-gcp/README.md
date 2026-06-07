@@ -10,7 +10,7 @@ End-to-end guide to deploying the LLM application stack on Google GKE in under a
 - Helm 3.12+ installed.
 - kubectl installed.
 
-Before running this quickstart, review the Google Cloud pricing calculator for the selected region, GPU node, standard nodes, NAT, Secret Manager, and Private Service Connect. Keep the environment short-lived unless a buyer-approved pilot scope requires longer testing.
+Before running this quickstart, review the Google Cloud cost calculator for the selected region, GPU node, standard nodes, NAT, Secret Manager, and Private Service Connect. Keep the environment short-lived unless a reviewer-approved pilot scope requires longer testing.
 
 ## Step 1 — Provision GKE cluster
 
