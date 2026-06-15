@@ -20,7 +20,7 @@ The mapping is scoped to controls that a software deployment kit can meaningfull
 | A.5.15 | Access control | Cloud IAM + K8s RBAC; no local accounts | Cluster modules |
 | A.5.16 | Identity management | Workload Identity / IRSA + ESO + Vault | `helm/.../externalsecret.yaml`, cluster modules |
 | A.5.17 | Authentication information | Secrets via ESO from Vault; never committed to Git | `helm/.../externalsecret.yaml`, `.gitignore` |
-| A.5.18 | Access rights | Least-privilege RBAC; runbook requires quarterly review | `docs/runbooks/rotate-secrets.md` |
+| A.5.18 | Access rights | Least-privilege RBAC; runbook requires quarterly architecture | `docs/runbooks/rotate-secrets.md` |
 | A.5.23 | Information security for use of cloud services | Private endpoints + CMK across all three modules | Cluster modules |
 | A.5.24 | Information security incident management planning and preparation | Incident response runbook | `docs/runbooks/incident-response.md` |
 | A.5.25 | Assessment and decision on information security events | SEV levels defined in incident runbook | `docs/runbooks/incident-response.md` |

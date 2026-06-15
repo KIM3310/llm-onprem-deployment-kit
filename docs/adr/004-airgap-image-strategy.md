@@ -33,7 +33,7 @@ Key specifics:
 - `skopeo copy --all` is the preferred tool (works without a Docker daemon; handles multi-arch manifests; supports digest verification on both sides).
 - Fallback to `docker` or `podman` when skopeo is unavailable.
 - `--dry-run` mode prints what would be mirrored without network calls (audit-friendly).
-- `--list` mode emits the inventory for procurement review without any other side effects.
+- `--list` mode emits the inventory for procurement architecture without any other side effects.
 
 The script does **not** mirror model weights. Model weight transport is a separate procedure (`docs/runbooks/airgap-image-mirror.md` has a section on this).
 
@@ -41,11 +41,11 @@ The script does **not** mirror model weights. Model weight transport is a separa
 
 ### Positive
 
-- **Inventory is code.** A single file lists every container the kit ships. Security review is a single diff.
+- **Inventory is code.** A single file lists every container the kit ships. Security architecture is a single diff.
 - **Operator-friendly.** One command, understandable output, resumable on transient failure (skopeo compares digests).
 - **Transport-agnostic.** The operator can run from a jump host with internet access, or use a two-hop pattern (`skopeo copy dir:./bundle` on one host, carry, `skopeo copy dir:./bundle docker://...` on the destination host).
 - **Digest verification.** The operator can inspect `skopeo inspect` output post-mirror to confirm that the tag at the destination resolves to the same digest as upstream.
-- **Airtight CI story.** Bumping a version requires editing the script; a PR review catches unexpected bumps.
+- **Airtight CI story.** Bumping a version requires editing the script; a PR architecture catches unexpected bumps.
 
 ### Negative
 
@@ -122,4 +122,4 @@ Rejected as default. Requires customer infrastructure (a proxy registry) that ma
 | grafana/tempo | 2.5.0 | 250 MB | AGPL 3.0 |
 | nvidia/k8s/dcgm-exporter | 3.3.5-3.4.0 | 1 GB | Apache 2.0 |
 
-Customer should review upstream licenses for each image before accepting.
+Customer should architecture upstream licenses for each image before accepting.

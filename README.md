@@ -3,7 +3,7 @@
 ## Live Demo
 
 - [Open the public GitHub Pages demo](https://kim3310.github.io/llm-onprem-deployment-kit/)
-- Scope: credential-free, synthetic-data demo for reviewers and evaluators.
+- Scope: credential-free, synthetic-data demo for technical readers and evaluators.
 
 > An opinionated, enterprise-grade deployment kit for running LLM applications in private, hybrid, or airgapped cloud environments. Bring-your-own-infrastructure, BYO-model, security-and-compliance by default.
 
@@ -17,19 +17,19 @@
 
 ---
 
-## Product and Review Surface
+## Product and System Surface
 
 A private/hybrid LLM deployment kit for organizations that cannot send sensitive workloads to uncontrolled hosted endpoints.
 
 | Lens | Definition |
 |---|---|
 | Audience | Regulated enterprises, internal AI platform teams, security architects, and infrastructure operators. |
-| Review path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
-| Architecture signal | Terraform, Helm, air-gapped notes, compliance runbooks, model-routing boundaries, and infrastructure controls. |
+| Architecture path | Validate the demo, README, architecture notes, and quality gate before deeper workflow architecture. |
+| System signal | Terraform, Helm, air-gapped notes, compliance runbooks, model-routing boundaries, and infrastructure controls. |
 | Safety boundary | Templates are a deployment starting point; real environments need customer-specific threat modeling, secrets, IAM, and change control. |
-| Fast proof | Inspect the infra modules, run validation commands where available, and review the operating notes. |
+| Fast path | Inspect the infra modules, run validation commands where available, and architecture the operating notes. |
 
-## Reviewer Fast Path
+## System Fast Path
 
 - **First minute:** Read the reference architecture, then jump to compliance mappings and airgap runbooks.
 - **Local demo:** Use dry-run infrastructure validation rather than deploying by default.
@@ -37,11 +37,11 @@ A private/hybrid LLM deployment kit for organizations that cannot send sensitive
 
 ## Service Launch Playbook
 
-- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to review audiences, proof gates, operating boundaries, and risk controls.
+- [Service launch playbook](docs/service-launch-playbook.md) maps the repository to architecture audiences, operating gates, operating boundaries, and risk controls.
 
-## Review Notes
+## Architecture Notes
 
-- [Review guide](docs/reviewer-evidence-map.md) summarizes the project angle, first files to inspect, verification commands, and known boundaries.
+- [Architecture guide](docs/architecture-evidence-map.md) summarizes the project angle, first files to inspect, runtime commands, and known boundaries.
 - [Quality notes](docs/quality-gate.md) lists the local checks, CI surface, and release expectations for this repository.
 - [Enterprise readiness notes](docs/enterprise-readiness.md) outlines security, data, operations, integration, and handoff expectations.
 
@@ -79,9 +79,9 @@ By the time a customer has decided to buy, their deployment team is asking quest
 
 - Enterprise infrastructure teams responsible for deploying third-party AI workloads in regulated environments (financial services, healthcare, public sector, defense, energy).
 - Forward deployed engineering teams at AI-native vendors who need a consistent deployment story across dozens of customer environments.
-- Security and compliance reviewers who need to map a proposed deployment to existing control frameworks before granting change-management approval.
+- Security and compliance technical readers who need to map a proposed deployment to existing control frameworks before granting change-management approval.
 
-If the question is "how fast can I get a demo LLM running on my laptop," this is not the right repository. If the question is "how do I ship an LLM workload to a customer's airgapped VNet and get through their security review without eight weeks of back-and-forth," this is.
+If the question is "how fast can I get a demo LLM running on my laptop," this is not the right repository. If the question is "how do I ship an LLM workload to a customer's airgapped VNet and get through their security architecture without eight weeks of back-and-forth," this is.
 
 ---
 
@@ -328,7 +328,7 @@ This repository includes a neutral cloud and AI engineering blueprint that maps 
 
 ## Enterprise Productization
 
-- [Product operating model](docs/product-operating-model.md) defines the reviewer, trust boundary, trust boundary, operating checks, and service path for this repository.
+- [Product operating model](docs/product-operating-model.md) defines the technical reader, trust boundary, trust boundary, operating checks, and service path for this repository.
 
 ## System Architecture
 

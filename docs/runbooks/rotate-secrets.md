@@ -115,7 +115,7 @@ Record the following in the ticket or change record:
 - Operator identity
 - Timestamps (start, complete)
 - Path(s) rotated
-- Verification commands run and their output
+- Runtime commands run and their output
 - Whether the old value was explicitly revoked (required for security-driven rotations)
 
 ## Rollback

@@ -86,7 +86,7 @@ When bumping vLLM (e.g. v0.4.3 -> v0.5.1):
 
 1. Update `inference.image.tag` in your values override, or on the CLI with `--set inference.image.tag=v0.5.1`.
 2. Mirror the new image first: `./scripts/airgap-mirror.sh --target ...` with an updated `IMAGES` list.
-3. `helm diff upgrade` and review the Deployment changes carefully: check for new CLI flags, changed env vars.
+3. `helm diff upgrade` and architecture the Deployment changes carefully: check for new CLI flags, changed env vars.
 4. Apply as above.
 
 ## Procedure - Quantization change

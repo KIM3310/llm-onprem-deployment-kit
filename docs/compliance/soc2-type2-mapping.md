@@ -57,7 +57,7 @@ It is intended as a starting point for a customer's SOC 2 auditor or the vendor'
 |---------|--------|-------------------|-------------------|
 | CC6.1 | Restricts access to information and assets | Private control plane, OPA at gateway, K8s RBAC | Cluster modules, `helm/.../gateway-deployment.yaml` |
 | CC6.2 | Register and authorize new users | Access via cloud IAM groups only; no local accounts on AKS | `terraform/modules/azure-aks/main.tf` (`local_account_disabled = true`) |
-| CC6.3 | Review user access periodically | Runbook requires quarterly access reviews | `docs/runbooks/rotate-secrets.md` |
+| CC6.3 | Architecture user access periodically | Runbook requires quarterly access architectures | `docs/runbooks/rotate-secrets.md` |
 | CC6.6 | Implements logical access security for data transmission | TLS at gateway; mTLS roadmap; private LB only | `helm/.../gateway-service.yaml` |
 | CC6.7 | Restrict the transmission, movement, and removal of information | Egress restricted by NetworkPolicy + userDefinedRouting | `helm/.../networkpolicy.yaml` |
 | CC6.8 | Implements controls to prevent unauthorized software installation | Immutable image tags, Binary Authorization on GKE | `terraform/modules/gcp-gke/main.tf` (`binary_authorization` block) |
@@ -102,7 +102,7 @@ It is intended as a starting point for a customer's SOC 2 auditor or the vendor'
 
 ## Gaps to close before a SOC 2 audit
 
-- **Access review evidence.** The kit ships the runbook for rotation; the customer must actually rotate on a cadence and keep evidence. This kit cannot attest to operations.
+- **Access architecture evidence.** The kit ships the runbook for rotation; the customer must actually rotate on a cadence and keep evidence. This kit cannot attest to operations.
 - **Incident evidence.** SEV levels and paging are defined; customer must wire to their ticketing system.
 - **Personnel controls (CC1.4, CC1.5).** Organizational controls are out of scope for a software kit.
 - **Physical controls (CC6.4, CC6.5).** Cloud-provider inherited; reference SOC 2 reports from Azure / AWS / GCP.

@@ -11,7 +11,7 @@ End-to-end guide to deploying the LLM application stack on Amazon EKS in under a
 - kubectl installed.
 - `eksctl` (optional, for troubleshooting).
 
-Before running this quickstart, review the AWS cloud cost calculator for the selected region, GPU node, standard nodes, NAT Gateway, Secrets Manager, and VPC Endpoints. Keep the environment short-lived unless a reviewer-approved pilot scope requires longer testing.
+Before running this quickstart, architecture the AWS cloud cost calculator for the selected region, GPU node, standard nodes, NAT Gateway, Secrets Manager, and VPC Endpoints. Keep the environment short-lived unless a operator-approved pilot scope requires longer testing.
 
 ## Step 1 — Provision EKS cluster
 

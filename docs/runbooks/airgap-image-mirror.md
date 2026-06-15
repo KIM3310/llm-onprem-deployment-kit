@@ -18,7 +18,7 @@ Mirror every container image the `llm-stack` Helm chart uses into a customer-con
 
 If your jump host has no access to the public internet, use a two-hop pattern: an internet-connected workstation pulls images to a tarball via `skopeo copy --dest dir:./images/`, you carry the tarball across the airgap, and a second jump host pushes them into the destination registry.
 
-## Step 1 - Review the image list
+## Step 1 - Architecture the image list
 
 ```bash
 ./scripts/airgap-mirror.sh --list

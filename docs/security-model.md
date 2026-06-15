@@ -1,6 +1,6 @@
 # Security Model
 
-This document describes the threat model, trust boundaries, and controls implemented in `llm-onprem-deployment-kit`. It is intended to survive a security review by a customer's CISO office.
+This document describes the threat model, trust boundaries, and controls implemented in `llm-onprem-deployment-kit`. It is intended to survive a security architecture by a customer's CISO office.
 
 ## Objective
 
@@ -121,7 +121,7 @@ Operate a vendor-supplied LLM application inside a customer-controlled cloud env
 - **Prompt-injection-driven tool misuse.** The inference service does not directly execute tools; this kit does not ship the tool layer. Consumers (e.g. `stage-pilot`) are responsible for tool-call guardrails.
 - **Vault seal key management.** Vault unseal is the customer's responsibility; this kit assumes Vault is already operational.
 
-## Review cadence
+## Architecture cadence
 
 - Security model reviewed at every major release.
 - Compliance mappings updated whenever a control framework revision is published (SOC 2, ISO 27001).

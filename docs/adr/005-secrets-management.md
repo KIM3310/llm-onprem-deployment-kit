@@ -89,7 +89,7 @@ Vault's official pattern: a sidecar in each pod that renders secrets into templa
 
 Encrypted secrets committed to Git, decrypted by a controller. Rejected because:
 
-- Rotation requires a Git commit, which couples security rotations to PR review.
+- Rotation requires a Git commit, which couples security rotations to PR architecture.
 - Controller holds a private key that is itself a critical secret (what rotates the rotator?).
 - Audit trail is "look at Git history", which is weaker than Vault's audit log.
 

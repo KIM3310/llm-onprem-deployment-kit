@@ -18,7 +18,7 @@ Please include:
 ## Security Expectations
 
 - Never commit kubeconfigs, Terraform state, cloud credentials, registry tokens, or private model artifacts.
-- Review generated manifests for least privilege before applying them to a cluster.
+- Architecture generated manifests for least privilege before applying them to a cluster.
 - Run local verification before merging:
 
 ```bash
