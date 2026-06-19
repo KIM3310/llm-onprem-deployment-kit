@@ -3,7 +3,7 @@
 ## Live Demo
 
 - [Open the public GitHub Pages demo](https://kim3310.github.io/llm-onprem-deployment-kit/)
-- Scope: credential-free, synthetic-data demo for technical readers and evaluators.
+- Scope: credential-free, synthetic-data demo for architecture inspection paths and evaluators.
 
 > An opinionated, enterprise-grade deployment kit for running LLM applications in private, hybrid, or airgapped cloud environments. Bring-your-own-infrastructure, BYO-model, security-and-compliance by default.
 
@@ -79,7 +79,7 @@ By the time a customer has decided to buy, their deployment team is asking quest
 
 - Enterprise infrastructure teams responsible for deploying third-party AI workloads in regulated environments (financial services, healthcare, public sector, defense, energy).
 - Forward deployed engineering teams at AI-native vendors who need a consistent deployment story across dozens of customer environments.
-- Security and compliance technical readers who need to map a proposed deployment to existing control frameworks before granting change-management approval.
+- Security and compliance architecture inspection paths who need to map a proposed deployment to existing control frameworks before granting change-management approval.
 
 If the question is "how fast can I get a demo LLM running on my laptop," this is not the right repository. If the question is "how do I ship an LLM workload to a customer's airgapped VNet and get through their security architecture without eight weeks of back-and-forth," this is.
 
@@ -328,7 +328,7 @@ This repository includes a neutral cloud and AI engineering blueprint that maps 
 
 ## Enterprise Productization
 
-- [Product operating model](docs/product-operating-model.md) defines the technical reader, trust boundary, trust boundary, operating checks, and service path for this repository.
+- [Product operating model](docs/product-operating-model.md) defines the architecture inspection, trust boundary, trust boundary, operating checks, and service path for this repository.
 
 ## System Architecture
 
