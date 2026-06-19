@@ -1,0 +1,73 @@
+{
+  "name": "LLM On-Prem Deployment Kit",
+  "slug": "llm-onprem-deployment-kit",
+  "canonical_url": "https://kim3310.github.io/llm-onprem-deployment-kit/",
+  "repository_url": "https://github.com/KIM3310/llm-onprem-deployment-kit",
+  "architecture_url": "https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/system-architecture.md",
+  "revenue_architecture_url": "https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/revenue-architecture.md",
+  "lead_capture_url": "mailto:ehdjs1351@gmail.com?subject=LLM%20On-Prem%20Deployment%20Kit%20private%20workspace&body=I%20am%20interested%20in%20paid%20private%20deployment%20support%2C%20hardened%20values%20pack%2C%20and%20upgrade%20runbook%20subscription%20for%20LLM%20On-Prem%20Deployment%20Kit.",
+  "productized_offer": "deployment kit for Kubernetes, Helm, Terraform, observability, and security controls",
+  "first_paid_sku": "paid private deployment support, hardened values pack, and upgrade runbook subscription",
+  "free_lead_magnet": "free reference architecture and Helm/Terraform starter kit",
+  "search_positioning": {
+    "primary_query": "LLM On-Prem Deployment Kit Kubernetes Helm Terraform",
+    "secondary_queries": [
+      "LLM On-Prem Deployment Kit demo",
+      "LLM On-Prem Deployment Kit system architecture",
+      "LLM On-Prem Deployment Kit developer tool",
+      "deployment kit for Kubernetes, Helm, Terraform, observability, and security controls service"
+    ],
+    "audience_intent": "Find a runnable demo, inspect the system architecture, and decide whether a private workspace or implementation package is useful."
+  },
+  "monetization_boundary": {
+    "free": "free reference architecture and Helm/Terraform starter kit",
+    "paid": "paid private deployment support, hardened values pack, and upgrade runbook subscription",
+    "metering_hooks": [
+      "workspace_id",
+      "plan",
+      "quota_day",
+      "export_count",
+      "lead_source"
+    ],
+    "cost_guardrails": [
+      "static first",
+      "edge functions",
+      "customer API keys",
+      "cached AI outputs",
+      "synthetic public data"
+    ]
+  },
+  "structured_data": {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "LLM On-Prem Deployment Kit",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web, serverless, and local development environments",
+    "url": "https://kim3310.github.io/llm-onprem-deployment-kit/",
+    "codeRepository": "https://github.com/KIM3310/llm-onprem-deployment-kit",
+    "description": "LLM On-Prem Deployment Kit: deployment kit for Kubernetes, Helm, Terraform, observability, and security controls. Free entry point: free reference architecture and Helm/Terraform starter kit. Paid path: paid private.",
+    "creator": {
+      "@type": "Person",
+      "name": "KIM3310",
+      "url": "https://github.com/KIM3310"
+    },
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "free reference architecture and Helm/Terraform starter kit",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://kim3310.github.io/llm-onprem-deployment-kit/"
+      },
+      {
+        "@type": "Offer",
+        "name": "paid private deployment support, hardened values pack, and upgrade runbook subscription",
+        "availability": "https://schema.org/LimitedAvailability",
+        "url": "https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/revenue-architecture.md"
+      }
+    ],
+    "isAccessibleForFree": true,
+    "keywords": "llm-onprem-deployment-kit, LLM, On-Prem, Deployment, Kit, deployment, kit, Kubernetes, Helm, Terraform, observability, security, controls, support, hardened, values, pack, upgrade, runbook, subscription, reference, architecture"
+  }
+}

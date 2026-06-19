@@ -337,3 +337,17 @@ This repository includes a neutral cloud and AI engineering blueprint that maps 
 ## Service Architecture
 
 - [Service architecture](docs/service-architecture.md) defines the cloud resources, account information, cost controls, and production guardrails needed to turn this repo into a scoped service without publishing public financial assumptions.
+
+<!-- search-growth-readme:start -->
+
+## Search And Service Surface
+
+- Public entry: free reference architecture and Helm/Terraform starter kit
+- Paid boundary: paid private deployment support, hardened values pack, and upgrade runbook subscription
+- Canonical URL: https://kim3310.github.io/llm-onprem-deployment-kit/
+- Lead capture: mailto:ehdjs1351@gmail.com?subject=LLM%20On-Prem%20Deployment%20Kit%20private%20workspace&body=I%20am%20interested%20in%20paid%20private%20deployment%20support%2C%20hardened%20values%20pack%2C%20and%20upgrade%20runbook%20subscription%20for%20LLM%20On-Prem%20Deployment%20Kit.
+- Machine-readable offer: [docs/service-offer.json](docs/service-offer.json)
+- Search growth implementation: [docs/search-growth-implementation.md](docs/search-growth-implementation.md)
+- Revenue architecture: [docs/revenue-architecture.md](docs/revenue-architecture.md)
+
+<!-- search-growth-readme:end -->
