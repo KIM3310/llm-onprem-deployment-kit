@@ -10,7 +10,7 @@ End-to-end guide to deploying the LLM application stack on Azure AKS in under an
 - Helm 3.12+ installed.
 - kubectl installed.
 
-Before running this quickstart, architecture the Azure cloud cost calculator for the selected region, GPU node, standard nodes, NAT gateway, Key Vault, and Private Endpoints. Keep the environment short-lived unless a operator-approved pilot scope requires longer testing.
+Before running this quickstart, review the Azure cloud cost calculator for the selected region, GPU node, standard nodes, NAT gateway, Key Vault, and Private Endpoints. Keep the environment short-lived unless an operator-approved pilot scope requires longer testing.
 
 ## Step 1 — Provision AKS cluster
 
