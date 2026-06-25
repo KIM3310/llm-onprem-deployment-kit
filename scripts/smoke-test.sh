@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2218
 #
 # smoke-test.sh - Post-deploy smoke test for the llm-stack Helm release.
 #
@@ -17,8 +18,14 @@ NAMESPACE="llm-stack"
 RELEASE="llm-stack"
 BEARER=""
 
-log()  { printf '[%s] %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*"; }
-die()  { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
+log() {
+  printf '[%s] %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*"
+}
+
+die() {
+  printf 'ERROR: %s\n' "$*" >&2
+  exit 1
+}
 
 usage() {
   cat <<EOF
