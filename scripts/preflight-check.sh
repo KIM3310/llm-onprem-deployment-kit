@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2218
 #
 # preflight-check.sh - Validate that a Kubernetes cluster is ready to host
 # the llm-stack Helm chart. Runs read-only checks only.
@@ -15,16 +16,34 @@ NAMESPACE="llm-stack"
 REQUIRE_GPU=false
 STRICT=false
 
-log_info()  { printf '[ INFO] %s\n' "$*"; }
-log_ok()    { printf '[  OK ] %s\n' "$*"; }
-log_warn()  { printf '[WARN ] %s\n' "$*"; }
-log_fail()  { printf '[FAIL ] %s\n' "$*"; }
+log_info() {
+  printf '[ INFO] %s\n' "$*"
+}
+
+log_ok() {
+  printf '[  OK ] %s\n' "$*"
+}
+
+log_warn() {
+  printf '[WARN ] %s\n' "$*"
+}
+
+log_fail() {
+  printf '[FAIL ] %s\n' "$*"
+}
 
 WARN_COUNT=0
 FAIL_COUNT=0
 
-warn() { log_warn "$*"; WARN_COUNT=$((WARN_COUNT + 1)); }
-fail() { log_fail "$*"; FAIL_COUNT=$((FAIL_COUNT + 1)); }
+warn() {
+  log_warn "$*"
+  WARN_COUNT=$((WARN_COUNT + 1))
+}
+
+fail() {
+  log_fail "$*"
+  FAIL_COUNT=$((FAIL_COUNT + 1))
+}
 
 usage() {
   cat <<EOF

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2218
 #
 # collect-diag-bundle.sh - Gather a diagnostic bundle for support escalation.
 #
@@ -16,8 +17,14 @@ NAMESPACE="llm-stack"
 RELEASE="llm-stack"
 OUT_DIR="${OUT_DIR:-/tmp}"
 
-log() { printf '[%s] %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*"; }
-die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
+log() {
+  printf '[%s] %s\n' "$(date -u +'%Y-%m-%dT%H:%M:%SZ')" "$*"
+}
+
+die() {
+  printf 'ERROR: %s\n' "$*" >&2
+  exit 1
+}
 
 usage() {
   cat <<EOF

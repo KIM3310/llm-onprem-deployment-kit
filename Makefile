@@ -63,7 +63,7 @@ help:
 # ----------------------------------------------------------------------------
 # Validation
 # ----------------------------------------------------------------------------
-.PHONY: verify validate fmt tf-validate helm-lint shell-lint
+.PHONY: verify validate fmt check-terraform check-helm check-shellcheck tf-validate helm-lint shell-lint
 
 verify:
 	$(PYTHON) scripts/validate_repository_surface.py
@@ -72,22 +72,40 @@ verify:
 validate: tf-validate helm-lint shell-lint
 	@echo "[OK] All validation checks passed."
 
-fmt:
+check-terraform:
+	@if ! command -v $(TERRAFORM) >/dev/null 2>&1; then \
+	  echo "Terraform >=1.6 is required. Install Terraform or run: make TERRAFORM=/path/to/terraform <target>" >&2; \
+	  exit 1; \
+	fi
+
+check-helm:
+	@if ! command -v $(HELM) >/dev/null 2>&1; then \
+	  echo "Helm >=3.12 is required. Install Helm or run: make HELM=/path/to/helm <target>" >&2; \
+	  exit 1; \
+	fi
+
+check-shellcheck:
+	@if ! command -v $(SHELLCHECK) >/dev/null 2>&1; then \
+	  echo "ShellCheck is required. Install ShellCheck or run: make SHELLCHECK=/path/to/shellcheck <target>" >&2; \
+	  exit 1; \
+	fi
+
+fmt: check-terraform
 	$(TERRAFORM) fmt -recursive terraform/
 
-tf-validate:
+tf-validate: check-terraform
 	@for d in $(TF_MODULE_DIRS) $(TF_EXAMPLE_DIRS); do \
 	  echo "==> terraform validate $$d"; \
 	  (cd $$d && $(TERRAFORM) init -backend=false -input=false -no-color >/dev/null && \
 	    $(TERRAFORM) validate -no-color) || exit 1; \
 	done
 
-helm-lint:
+helm-lint: check-helm
 	$(HELM) lint $(HELM_CHART_DIR)
 	$(HELM) lint $(HELM_CHART_DIR) --values $(HELM_CHART_DIR)/values-airgap.yaml
 	$(HELM) lint $(HELM_CHART_DIR) --values $(HELM_CHART_DIR)/values-dev.yaml
 
-shell-lint:
+shell-lint: check-shellcheck
 	$(SHELLCHECK) scripts/*.sh tests/*.sh examples/**/scripts/*.sh
 
 # ----------------------------------------------------------------------------

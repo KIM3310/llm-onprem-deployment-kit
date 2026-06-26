@@ -35,6 +35,19 @@ A private/hybrid LLM deployment kit for organizations that cannot send sensitive
 - **Local demo:** Use dry-run infrastructure validation rather than deploying by default.
 - **Verification:** Run `make validate`; targeted checks are `make tf-validate`, `make helm-lint`, and `make shell-lint`.
 
+## Local Validation Tiers
+
+```bash
+make verify    # repository surface + architecture blueprint; requires Python only
+make validate  # Terraform, Helm, and ShellCheck validation; requires the infra toolchain
+```
+
+If Terraform, Helm, or ShellCheck are installed outside `PATH`, pass explicit paths, for example:
+
+```bash
+make TERRAFORM=/path/to/terraform HELM=/path/to/helm SHELLCHECK=/path/to/shellcheck validate
+```
+
 ## Service Launch Playbook
 
 - [Service launch playbook](docs/service-launch-playbook.md) maps the repository to architecture audiences, operating gates, operating boundaries, and risk controls.
