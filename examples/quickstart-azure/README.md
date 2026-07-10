@@ -142,5 +142,5 @@ For production deployment, see `docs/runbooks/initial-deploy.md`.
 ## Next steps
 
 - Walk through `docs/runbooks/initial-deploy.md` for production-grade settings.
-- Architecture `docs/runbooks/rotate-secrets.md` before any real secrets land in Key Vault.
+- Review `docs/runbooks/rotate-secrets.md` before any real secrets land in Key Vault.
 - Run `docs/runbooks/incident-response.md` tabletop exercise with your on-call team.

@@ -112,6 +112,7 @@ LIST_ONLY=false
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --target)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then die "Missing value for $1"; fi
       TARGET="$2"
       shift 2
       ;;
@@ -120,6 +121,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --tool)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then die "Missing value for $1"; fi
       TOOL="$2"
       shift 2
       ;;

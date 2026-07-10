@@ -2,7 +2,7 @@
 
 Updated: 2026-05-30
 
-These notes keep the repository easy to architecture without overstating what is production-ready.
+These notes keep the repository easy to review without overstating what is production-ready.
 
 ## Profile
 
@@ -10,19 +10,19 @@ These notes keep the repository easy to architecture without overstating what is
 |---|---|
 | Repository | `llm-onprem-deployment-kit` |
 | Primary stack | Terraform, Helm |
-| System expectation | Local architecture should not require customer data or production credentials. |
+| Review expectation | Local review should not require customer data or production credentials. |
 
 ## Commands
 
 | Purpose | Command |
 |---|---|
-| Architecture gate | `Architecture README fast path, CI workflow, and documented demo artifacts` |
+| Review gate | `README fast path, CI workflow, and documented demo artifacts` |
 
 ## CI
 
 - .github/workflows/architecture-blueprint.yml
 - .github/workflows/ci.yml
-- .github/workflows/dependency-architecture.yml
+- .github/workflows/dependency-review.yml
 - .github/workflows/helm-lint.yml
 - .github/workflows/repository-health.yml
 - .github/workflows/repository-surface.yml
@@ -39,7 +39,7 @@ These notes keep the repository easy to architecture without overstating what is
 
 ## Before Presenting
 
-- README explains the user, the pain, the safety boundary, and the fast path path.
+- README explains the user, the pain, the safety boundary, and the fast path.
 - `docs/service-launch-playbook.md` explains the product, pilot, service, or proof-of-value angle when relevant.
 - Tests or smoke checks are documented even when optional infrastructure is unavailable.
 - Failure modes and unsupported claims are visible before the project is presented externally.

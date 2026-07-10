@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2218
 #
 # collect-diag-bundle.sh - Gather a diagnostic bundle for support escalation.
 #
@@ -40,9 +39,21 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --namespace) NAMESPACE="$2"; shift 2 ;;
-    --release) RELEASE="$2"; shift 2 ;;
-    --out-dir) OUT_DIR="$2"; shift 2 ;;
+    --namespace)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then die "Missing value for $1"; fi
+      NAMESPACE="$2"
+      shift 2
+      ;;
+    --release)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then die "Missing value for $1"; fi
+      RELEASE="$2"
+      shift 2
+      ;;
+    --out-dir)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then die "Missing value for $1"; fi
+      OUT_DIR="$2"
+      shift 2
+      ;;
     -h|--help) usage; exit 0 ;;
     *) die "Unknown argument: $1" ;;
   esac

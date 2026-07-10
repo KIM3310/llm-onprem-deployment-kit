@@ -63,11 +63,15 @@ help:
 # ----------------------------------------------------------------------------
 # Validation
 # ----------------------------------------------------------------------------
-.PHONY: verify validate fmt check-terraform check-helm check-shellcheck tf-validate helm-lint shell-lint
+.PHONY: verify validate fmt check-terraform check-helm check-shellcheck script-arg-test tf-validate helm-lint shell-lint
 
 verify:
 	$(PYTHON) scripts/validate_repository_surface.py
 	$(PYTHON) scripts/validate_architecture_blueprint.py
+	./tests/script-argument-test.sh
+
+script-arg-test:
+	./tests/script-argument-test.sh
 
 validate: tf-validate helm-lint shell-lint
 	@echo "[OK] All validation checks passed."

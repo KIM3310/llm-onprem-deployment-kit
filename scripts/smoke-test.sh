@@ -41,9 +41,21 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --namespace) NAMESPACE="$2"; shift 2 ;;
-    --release) RELEASE="$2"; shift 2 ;;
-    --bearer) BEARER="$2"; shift 2 ;;
+    --namespace)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then die "Missing value for $1"; fi
+      NAMESPACE="$2"
+      shift 2
+      ;;
+    --release)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then die "Missing value for $1"; fi
+      RELEASE="$2"
+      shift 2
+      ;;
+    --bearer)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then die "Missing value for $1"; fi
+      BEARER="$2"
+      shift 2
+      ;;
     -h|--help) usage; exit 0 ;;
     *) die "Unknown argument: $1" ;;
   esac

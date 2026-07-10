@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2218
 #
 # preflight-check.sh - Validate that a Kubernetes cluster is ready to host
 # the llm-stack Helm chart. Runs read-only checks only.
@@ -59,7 +58,15 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --namespace) NAMESPACE="$2"; shift 2 ;;
+    --namespace)
+      if [[ -z "${2:-}" || "${2:-}" == --* ]]; then
+        fail "Missing value for $1"
+        usage
+        exit 2
+      fi
+      NAMESPACE="$2"
+      shift 2
+      ;;
     --gpu) REQUIRE_GPU=true; shift ;;
     --strict) STRICT=true; shift ;;
     -h|--help) usage; exit 0 ;;

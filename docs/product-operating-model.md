@@ -3,7 +3,7 @@
 ## Public Demo
 
 - URL: https://kim3310.github.io/llm-onprem-deployment-kit/
-- Scope: credential-free synthetic demo surface for quick architecture inspection inspection.
+- Scope: credential-free synthetic demo surface for quick deployment review.
 
 Repository: `llm-onprem-deployment-kit`
 Last updated: 2026-06-03 KST
