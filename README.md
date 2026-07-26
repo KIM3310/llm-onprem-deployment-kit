@@ -357,6 +357,7 @@ This repository bundles references to third-party container images (vLLM, Qdrant
 - Paid boundary: paid private deployment support, hardened values pack, and upgrade runbook subscription
 - Canonical URL: https://kim3310.github.io/llm-onprem-deployment-kit/
 - Lead capture: https://github.com/KIM3310/llm-onprem-deployment-kit/issues/new?template=service-inquiry.yml&title=Private+workspace+inquiry%3A+LLM+On-Prem+Deployment+Kit
+- Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers
 - Machine-readable offer: [docs/service-offer.json](docs/service-offer.json)
 - Search growth implementation: [docs/search-growth-implementation.md](docs/search-growth-implementation.md)
 - Revenue architecture: [docs/revenue-architecture.md](docs/revenue-architecture.md)

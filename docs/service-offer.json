@@ -69,5 +69,29 @@
     ],
     "isAccessibleForFree": true,
     "keywords": "llm-onprem-deployment-kit, LLM, On-Prem, Deployment, Kit, deployment, kit, Kubernetes, Helm, Terraform, observability, security, controls, support, hardened, values, pack, upgrade, runbook, subscription, reference, architecture"
+  },
+  "commerce": {
+    "gateway_url": "https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers",
+    "lane_id": "aix-governance-sprint",
+    "lane_name": "AIX Governance Sprint",
+    "billing_mode": "quote",
+    "price_unit": "governance sprint or deployment pack",
+    "fulfillment_kind": "private workshop, controls evidence, and deployment adaptation",
+    "risk_bucket": "high-trust-b2b",
+    "checkout": {
+      "provider": "lemon-squeezy",
+      "status": "account-onboarding-required",
+      "fallback_url": "https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers"
+    },
+    "sponsorship": {
+      "provider": "github-sponsors",
+      "eligible": true,
+      "status": "account-onboarding-required"
+    },
+    "advertising": {
+      "provider": null,
+      "eligible": false,
+      "status": "not-applicable"
+    }
   }
 }
