@@ -12,3 +12,9 @@ Resource route: https://kim3310-doeon-kim-portfolio.pages.dev/resources/llm-onpr
 Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers
 
 Use this project as a runnable or inspectable reference for LLM On-Prem Deployment Kit demo, LLM On-Prem Deployment Kit system architecture, LLM On-Prem Deployment Kit developer tool, deployment kit for Kubernetes, Helm, Terraform, observability, and security controls service.
+# ADSENSE-PUBLICATION:START
+Editorial guide: https://llm-onprem-deployment-kit.pages.dev/guide.html
+Architecture article: https://llm-onprem-deployment-kit.pages.dev/architecture.html
+Verification article: https://llm-onprem-deployment-kit.pages.dev/verification.html
+Publisher information: https://llm-onprem-deployment-kit.pages.dev/publisher.html
+# ADSENSE-PUBLICATION:END

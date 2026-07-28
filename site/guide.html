@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project Guide | LLM On-Prem Deployment Kit</title>
+  <meta name="description" content="Free private LLM deployment readiness map for Terraform, Helm, and air-gapped operations. Source-backed guide for infrastructure architects and private AI…">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="google-adsense-account" content="ca-pub-4973160293737562">
+  <link rel="canonical" href="https://llm-onprem-deployment-kit.pages.dev/guide.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Project Guide | LLM On-Prem Deployment Kit">
+  <meta property="og:description" content="Free private LLM deployment readiness map for Terraform, Helm, and air-gapped operations. Source-backed guide for infrastructure architects and private AI platform teams.">
+  <meta property="og:url" content="https://llm-onprem-deployment-kit.pages.dev/guide.html">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Project Guide | LLM On-Prem Deployment Kit","description":"Free private LLM deployment readiness map for Terraform, Helm, and air-gapped operations. Source-backed guide for infrastructure architects and private AI platform teams.","url":"https://llm-onprem-deployment-kit.pages.dev/guide.html","dateModified":"2026-07-28","author":{"@type":"Person","name":"KIM3310","url":"https://github.com/KIM3310"},"publisher":{"@type":"Person","name":"KIM3310","url":"https://kim3310-doeon-kim-portfolio.pages.dev"},"isAccessibleForFree":true}</script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4973160293737562" crossorigin="anonymous"></script>
+  <style>
+    :root { color-scheme: light; --ink: #17201f; --muted: #52605d; --line: #cbd2ce; --paper: #ffffff; --ground: #f5f6f4; --green: #126455; --coral: #c94732; --gold: #b67a00; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--ground); color: var(--ink); font: 17px/1.72 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    a { color: var(--green); text-underline-offset: 3px; }
+    .site-header { border-bottom: 1px solid var(--line); background: rgba(245, 246, 244, .97); }
+    .site-nav, .article-shell, .site-footer-inner { width: min(920px, calc(100% - 32px)); margin: 0 auto; }
+    .site-nav { min-height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .site-nav strong { font-size: .92rem; }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 14px; font-size: .84rem; }
+    .article-shell { padding: 54px 0 72px; }
+    .breadcrumbs { color: var(--muted); font-size: .82rem; }
+    .article-intro { padding: 28px 0 36px; border-bottom: 2px solid var(--ink); }
+    .kicker { color: var(--coral); font-size: .76rem; font-weight: 800; text-transform: uppercase; }
+    h1 { margin: 10px 0 16px; max-width: 18ch; font-size: 3.5rem; line-height: 1.04; letter-spacing: 0; overflow-wrap: anywhere; }
+    .lede { max-width: 68ch; color: var(--muted); font-size: 1.08rem; }
+    .review-note { margin-top: 18px; color: var(--muted); font-size: .84rem; }
+    article { padding-top: 24px; }
+    article h2 { margin: 42px 0 12px; padding-top: 6px; font-size: 1.75rem; line-height: 1.2; letter-spacing: 0; }
+    article h3 { margin: 30px 0 8px; font-size: 1.2rem; letter-spacing: 0; }
+    article h4 { margin: 24px 0 6px; font-size: 1.02rem; letter-spacing: 0; }
+    article p, article li { max-width: 76ch; }
+    article li + li { margin-top: 6px; }
+    pre { max-width: 100%; overflow: auto; border-left: 4px solid var(--gold); background: #1d2423; color: #f6f8f7; padding: 18px; border-radius: 4px; font-size: .86rem; }
+    code { overflow-wrap: anywhere; }
+    :not(pre) > code { border: 1px solid var(--line); background: var(--paper); padding: 1px 5px; border-radius: 3px; font-size: .9em; }
+    .table-scroll { overflow-x: auto; margin: 20px 0; }
+    table { width: 100%; border-collapse: collapse; background: var(--paper); font-size: .9rem; }
+    th, td { border: 1px solid var(--line); padding: 10px; text-align: left; vertical-align: top; }
+    th { background: #e9eeeb; }
+    .boundary-note { margin: 30px 0 4px; border-left: 4px solid var(--coral); background: var(--paper); padding: 18px; }
+    .source-basis { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 22px; color: var(--muted); }
+    .site-footer { border-top: 1px solid var(--line); background: var(--paper); }
+    .site-footer-inner { padding: 28px 0 44px; color: var(--muted); font-size: .84rem; }
+    .site-footer-links { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
+    @media (max-width: 720px) {
+      .site-nav { align-items: flex-start; flex-direction: column; padding: 14px 0; }
+      .article-shell { padding-top: 32px; }
+      h1 { font-size: 2.35rem; }
+    }
+  </style>
+</head>
+<body data-ad-surface="editorial">
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Primary">
+      <strong>LLM On-Prem Deployment Kit</strong>
+      <div class="nav-links"><a href="/">Home</a><a href="/guide.html">Project guide</a><a href="/architecture.html">Architecture</a><a href="/verification.html">Verification</a><a href="/publisher.html">Publisher</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></div>
+    </nav>
+  </header>
+  <main class="article-shell">
+    <p class="breadcrumbs"><a href="/">Home</a> / Project guide</p>
+    <header class="article-intro">
+      <div class="kicker">Project guide</div>
+      <h1>Project Guide | LLM On-Prem Deployment Kit</h1>
+      <p class="lede">Free private LLM deployment readiness map for Terraform, Helm, and air-gapped operations. This guide organizes the repository&#039;s original implementation notes for infrastructure architects and private AI platform teams.</p>
+      <p class="review-note">Reviewed 2026-07-28. This page is derived from checked-in repository evidence and links back to its source.</p>
+    </header>
+
+    <article><h3>Live Demo</h3>
+<ul><li><a href="https://llm-onprem-deployment-kit.pages.dev/" rel="noopener">Open the public GitHub Pages demo</a></li><li>Scope: credential-free, synthetic-data demo for deployment reviewers and evaluators.</li></ul>
+<p>A customer-owned deployment baseline for evaluating private, hybrid, or air-gapped LLM infrastructure. It is designed for a bounded readiness sprint and must be adapted and validated before production use.</p>
+<p>---</p>
+<h3>System Overview</h3>
+<p>A private/hybrid LLM deployment kit for organizations that cannot send sensitive workloads to uncontrolled hosted endpoints.</p>
+<div class="table-scroll"><table><thead><tr><th>Area</th><th>Details</th></tr></thead><tbody><tr><td>Users</td><td>Regulated enterprises, internal AI platform teams, security architects, and infrastructure operators.</td></tr><tr><td>Technical path</td><td>Validate the demo, README, architecture notes, and quality gate before deeper workflow review.</td></tr><tr><td>System scope</td><td>Terraform, Helm, air-gapped notes, compliance runbooks, model-routing boundaries, and infrastructure controls.</td></tr><tr><td>Operating boundary</td><td>Customer owns the cloud account, cluster, registry, KMS, secrets, data, and logs. The chart supplies API-key protection and a reverse-proxy path, not end-user identity, tenant authorization, rate limiting, clustered vector state, or production evidence.</td></tr><tr><td>Evaluation path</td><td>Inspect the infra modules, run validation commands where available, and review the operating notes.</td></tr></tbody></table></div>
+<h3>Evaluation Path</h3>
+<ul><li><strong>Start here:</strong> Read the reference architecture, then jump to compliance mappings and airgap runbooks.</li><li><strong>Local demo:</strong> Use dry-run infrastructure validation rather than deploying by default.</li><li><strong>Checks:</strong> Run <code>make validate</code>; targeted checks are <code>make tf-validate</code>, <code>make helm-lint</code>, and <code>make shell-lint</code>.</li></ul>
+<h3>Local Validation Tiers</h3>
+<pre><code>make verify    # repository surface + architecture blueprint; requires Python only
+make validate  # Terraform, Helm, and ShellCheck validation; requires the infra toolchain</code></pre>
+<p>If Terraform, Helm, or ShellCheck are installed outside <code>PATH</code>, pass explicit paths, for example:</p>
+<pre><code>make TERRAFORM=/path/to/terraform HELM=/path/to/helm SHELLCHECK=/path/to/shellcheck validate</code></pre>
+<h3>Architecture Notes</h3>
+<ul><li><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/architecture-evidence-map.md" rel="noopener">Architecture guide</a> summarizes the system scope, first files to inspect, runtime commands, and known boundaries.</li><li><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/quality-gate.md" rel="noopener">Quality notes</a> lists the local checks, CI surface, and release expectations for this repository.</li><li><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/enterprise-readiness.md" rel="noopener">Enterprise readiness notes</a> outlines security, data, operations, integration, and handoff expectations.</li></ul>
+<h3>Table of Contents</h3>
+<ol><li><a href="#why-this-exists" rel="noopener">Why this exists</a></li><li><a href="#what-you-get" rel="noopener">What you get</a></li><li><a href="#reference-architecture" rel="noopener">Reference Architecture</a></li><li><a href="#quick-start" rel="noopener">Quick Start</a></li><li><a href="#compliance-mappings" rel="noopener">Compliance Mappings</a></li><li><a href="#runbooks" rel="noopener">Runbooks</a></li><li><a href="#choosing-a-cloud" rel="noopener">Choosing a Cloud</a></li><li><a href="#security-model" rel="noopener">Security Model</a></li><li><a href="#extending" rel="noopener">Extending</a></li><li><a href="#related-projects" rel="noopener">Related Projects</a></li><li><a href="#license" rel="noopener">License</a></li></ol>
+<p>---</p>
+<h3>Why this exists</h3>
+<p>Shipping large language model (LLM) applications to regulated customers is not a model problem. It is an *infrastructure* problem.</p>
+<p>By the time a customer has decided to buy, their deployment team is asking questions that have little to do with tokens per second:</p>
+<ul><li>&quot;Can we run this inside our existing VNet with no egress to the public internet?&quot;</li><li>&quot;Where does the encryption key live and who rotates it?&quot;</li><li>&quot;How do we mirror the container images into our private registry?&quot;</li><li>&quot;What does your disaster recovery look like, and can you show us an actual runbook?&quot;</li><li>&quot;Does this map to our SOC 2 and ISO 27001 controls?&quot;</li></ul>
+<p><code>llm-onprem-deployment-kit</code> packages infrastructure-as-code, a Helm baseline, runbooks, and control-mapping aids for a customer-owned readiness sprint. It shortens architecture review and pilot setup; it does not certify that a rendered template is a running, auditable production system.</p>
+<p><strong>Target audience:</strong></p>
+<ul><li>Enterprise infrastructure teams responsible for deploying third-party AI workloads in regulated environments (financial services, healthcare, public sector, defense, energy).</li><li>Forward deployed engineering teams at AI-native vendors who need a consistent deployment story across dozens of customer environments.</li><li>Security and compliance approvers who need to map a proposed deployment to existing control frameworks before granting change-management approval.</li></ul>
+<p>If the question is &quot;how fast can I get a demo LLM running on my laptop,&quot; this is not the right repository. If the question is &quot;what must we validate before a private LLM pilot can run inside the customer&#039;s account,&quot; this is the intended starting point.</p>
+<p>---</p>
+<h3>What you get</h3>
+<ul><li><strong>Terraform across three clouds</strong> - Reviewable Azure AKS, AWS EKS, and GCP GKE module starters with private-cluster, GPU-pool, private-endpoint, and optional customer-managed encryption controls.</li><li><strong>A guarded Helm baseline</strong> - <code>llm-stack</code> connects Traefik to API-key-protected vLLM, keeps Qdrant single-node until distributed consensus is explicitly designed, and optionally renders OpenTelemetry and External Secrets resources.</li><li><strong>Airgap runbooks and tooling</strong> - <code>scripts/airgap-mirror.sh</code> enumerates every container image the kit ships with their pinned digests and mirrors them into a customer-controlled registry. A step-by-step runbook walks through the procedure.</li><li><strong>Compliance mappings</strong> - Explicit control-by-control mapping for SOC 2 Type II and ISO 27001:2022 Annex A, plus an &quot;airgap requirements&quot; summary that most procurement teams can consume directly.</li><li><strong>Incident response playbook</strong> - Severity levels, paging thresholds, customer handoff pattern, and a diagnostic-bundle collection script that produces the artifacts support actually needs.</li><li><strong>Architecture Decision Records</strong> - Documented rationale for every load-bearing choice (vLLM vs TGI, Qdrant vs Weaviate, K8s vs ECS, secrets model, airgap image strategy), so downstream teams can challenge or extend decisions without reverse-engineering them.</li><li><strong>Validation surface</strong> - Terraform validation, Helm lint/render/schema checks, runtime-contract checks, and ShellCheck. Passing CI proves those repository checks only.</li></ul>
+<p>---</p>
+<h3>Reference Architecture</h3>
+<pre><code>flowchart LR
+    subgraph CustomerEdge[Customer Edge]
+        IdP[Customer IdP&lt;br/&gt;OIDC / SAML]
+        Access[Customer API Gateway&lt;br/&gt;Identity + Quotas + Rate Limits]
+        OpsUser[Operator / SRE]
+    end
+
+    subgraph PrivateNetwork[Private Network / VNet]
+        subgraph IngressTier[Ingress Tier]
+            PLB[Private Load Balancer]
+            TRAEFIK[Traefik Reverse Proxy&lt;br/&gt;TLS + Routing]
+        end
+
+        subgraph K8sCluster[Kubernetes Cluster - Private Control Plane]
+            subgraph AppTier[Application Tier]
+                VLLM[vLLM Inference&lt;br/&gt;GPU Node Pool]
+                QDRANT[Qdrant Vector DB&lt;br/&gt;Single StatefulSet Pod]
+            end
+            subgraph PlatformTier[Platform Tier]
+                OTEL[OpenTelemetry Collector]
+                ESO[External Secrets Operator]
+            end
+        end
+
+        subgraph DataPlane[Data and Secrets Plane]
+            KMS[Cloud KMS /&lt;br/&gt;Key Vault]
+            VAULT[HashiCorp Vault]
+            REGISTRY[Private Container Registry]
+            LOG[Loki + Prometheus]
+        end
+    end
+
+    OpsUser --&gt;|Private endpoint| Access
+    IdP --&gt; Access
+    Access --&gt; PLB
+    PLB --&gt; TRAEFIK
+    TRAEFIK --&gt; VLLM
+    VLLM --&gt; OTEL
+    QDRANT -. metrics .-&gt; OTEL
+    TRAEFIK -. metrics .-&gt; OTEL
+    OTEL --&gt; LOG
+    ESO --&gt; VAULT
+    VAULT --&gt; KMS
+    VLLM -.-&gt;|Pull images| REGISTRY
+    QDRANT -.-&gt;|Pull images| REGISTRY
+    TRAEFIK -.-&gt;|Pull images| REGISTRY</code></pre>
+<p>Notable properties of this architecture:</p>
+<ul><li><strong>Private intent, customer verification.</strong> Terraform and service annotations request private surfaces, but the customer must verify routes, DNS, firewall policy, and provider-specific load-balancer behavior.</li><li><strong>Customer-owned keys.</strong> KMS / Key Vault / Cloud KMS options keep key administration in the customer account; the sprint records who can use and rotate each key.</li><li><strong>Narrow built-in auth.</strong> vLLM validates one customer-owned API key. End-user identity, tenant policy, quotas, and rate limiting remain customer gateway responsibilities.</li><li><strong>Observable components, not audit completeness.</strong> The chart configures metric scraping and collector exporters. Per-request application audit, immutable retention, alerts, and evidence collection require customer integration and acceptance testing.</li></ul>
+<p>For the long form, see <a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/architecture.md" rel="noopener">`docs/architecture.md`</a>.</p>
+<p>---</p>
+<h3>Quick Start</h3>
+<p>The quick start assumes (a) a workstation with <code>terraform</code>, <code>helm</code>, <code>kubectl</code>, and the cloud CLI of your choice; (b) permissions to create a VPC/VNet, a Kubernetes cluster, and a KMS key in the target subscription/account/project; and (c) a private container registry that the cluster can pull from.</p>
+<p>For a full airgapped install with image mirroring, see <a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/runbooks/initial-deploy.md" rel="noopener">`docs/runbooks/initial-deploy.md`</a>.</p>
+<h4>1. Pick a cloud and provision infrastructure</h4>
+<pre><code>
+## Azure example
+cd terraform/modules/azure-aks/examples/basic
+terraform init
+terraform plan  -out=tfplan -var-file=../../../../../examples/quickstart-azure/terraform.tfvars
+terraform apply tfplan</code></pre>
+<p>Equivalent commands exist under <code>terraform/modules/aws-eks/examples/basic</code> and <code>terraform/modules/gcp-gke/examples/basic</code>.</p>
+<h4>2. Mirror container images (airgapped environments only)</h4>
+<pre><code>export TARGET_REGISTRY=registry.customer.internal/llm-stack
+scripts/airgap-mirror.sh --target &quot;$TARGET_REGISTRY&quot; --dry-run
+scripts/airgap-mirror.sh --target &quot;$TARGET_REGISTRY&quot;</code></pre>
+<h4>3. Create customer-owned pilot secrets</h4>
+<p>The baseline fails closed if its API-key or TLS secret is absent. For an evaluation cluster, create them directly; a customer pilot should use the approved secret manager and <code>ExternalSecret</code> path.</p>
+<pre><code>kubectl create namespace llm-stack
+kubectl -n llm-stack create secret generic llm-stack-inference-api-key \
+  --from-literal=api-key=&quot;$(openssl rand -hex 32)&quot;
+openssl req -x509 -newkey rsa:3072 -nodes -days 30 \
+  -subj &#039;/CN=llm.internal.example.com&#039; \
+  -keyout /tmp/llm-stack.key -out /tmp/llm-stack.crt
+kubectl -n llm-stack create secret tls llm-stack-tls \
+  --key /tmp/llm-stack.key --cert /tmp/llm-stack.crt
+rm -f /tmp/llm-stack.key /tmp/llm-stack.crt</code></pre>
+<h4>4. Install the llm-stack Helm chart</h4>
+<pre><code>helm upgrade --install llm-stack ./helm/llm-stack \
+  --namespace llm-stack \
+  --values ./helm/llm-stack/values.yaml \
+  --atomic --timeout 10m</code></pre>
+<p><code>values-airgap.yaml</code> is an overlay, not a turnkey install. It requires mirrored images and model weights, an approved <code>ClusterSecretStore</code>, customer observability endpoints, TLS material, network sources, storage, and an acceptance plan.</p>
+<h4>5. Verify</h4>
+<pre><code>make status
+scripts/smoke-test.sh --namespace llm-stack --release llm-stack</code></pre>
+<p>The smoke test checks the routed vLLM health path, sends an API-key-protected inference request, and checks the single Qdrant endpoint. It does not prove identity integration, quotas, rate limiting, high availability, backup recovery, immutable audit, or an SLO.</p>
+<p>---</p>
+<h3>Compliance Mappings</h3>
+<p>This kit is designed to produce evidence that maps directly to common enterprise control frameworks. Full mappings live under <a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/compliance/" rel="noopener">`docs/compliance/`</a>.</p>
+<div class="table-scroll"><table><thead><tr><th>Framework</th><th>Scope</th><th>Mapping Document</th></tr></thead><tbody><tr><td>SOC 2 Type II</td><td>Trust Services Criteria (Security, Availability, Confidentiality)</td><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/compliance/soc2-type2-mapping.md" rel="noopener">`soc2-type2-mapping.md`</a></td></tr><tr><td>ISO 27001:2022</td><td>Annex A controls applicable to cloud-hosted AI workloads</td><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/compliance/iso27001-mapping.md" rel="noopener">`iso27001-mapping.md`</a></td></tr><tr><td>Customer airgap</td><td>Common procurement questionnaire items for airgapped and sovereign deployments</td><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/compliance/airgap-requirements.md" rel="noopener">`airgap-requirements.md`</a></td></tr></tbody></table></div>
+<p>At-a-glance control summary:</p>
+<div class="table-scroll"><table><thead><tr><th>Control theme</th><th>SOC 2 TSC</th><th>ISO 27001 Annex A</th><th>This kit provides</th></tr></thead><tbody><tr><td>Logical access</td><td>CC6.1, CC6.2, CC6.3</td><td>A.5.15, A.5.16, A.8.2</td><td>vLLM API-key baseline plus customer-owned identity and gateway acceptance work</td></tr><tr><td>Encryption at rest</td><td>CC6.7</td><td>A.8.24</td><td>Optional CMK/IaC controls; effective encryption must be evidenced in the customer account</td></tr><tr><td>Encryption in transit</td><td>CC6.7</td><td>A.8.24</td><td>TLS at Traefik; east-west mTLS is not included</td></tr><tr><td>Change management</td><td>CC8.1</td><td>A.8.32</td><td>Terraform + Helm + GitHub Actions CI</td></tr><tr><td>Monitoring</td><td>CC7.1, CC7.2</td><td>A.8.15, A.8.16</td><td>OTel collector configuration and scrape surfaces; customer alerts and retention required</td></tr><tr><td>Incident response</td><td>CC7.4, CC7.5</td><td>A.5.24, A.5.26</td><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/runbooks/incident-response.md" rel="noopener">`incident-response.md`</a>, diag bundle</td></tr><tr><td>Availability</td><td>A1.1, A1.2</td><td>A.8.14</td><td>HPA/PDB and multi-zone infrastructure options; Qdrant remains single-node and no HA claim is made</td></tr></tbody></table></div>
+<p>---</p>
+<h3>Runbooks</h3>
+<p>Each runbook is written to be executable by an on-call engineer with working <code>kubectl</code>/<code>cloud CLI</code> access and no prior context.</p>
+<div class="table-scroll"><table><thead><tr><th>Runbook</th><th>Purpose</th><th>When to use</th></tr></thead><tbody><tr><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/runbooks/initial-deploy.md" rel="noopener">`initial-deploy.md`</a></td><td>End-to-end day-1 deployment</td><td>First install or re-install into a new environment</td></tr><tr><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/runbooks/airgap-image-mirror.md" rel="noopener">`airgap-image-mirror.md`</a></td><td>Mirror container images to a private registry</td><td>Any airgapped or sovereign install</td></tr><tr><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/runbooks/rotate-secrets.md" rel="noopener">`rotate-secrets.md`</a></td><td>Rotate JWT signing keys, Vault roots, API keys</td><td>Scheduled rotation or after suspected compromise</td></tr><tr><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/runbooks/upgrade-model.md" rel="noopener">`upgrade-model.md`</a></td><td>Upgrade the inference model with zero downtime</td><td>Model version bump</td></tr><tr><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/runbooks/incident-response.md" rel="noopener">`incident-response.md`</a></td><td>SEV levels, paging, customer handoff</td><td>Any production incident</td></tr><tr><td><a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/runbooks/disaster-recovery.md" rel="noopener">`disaster-recovery.md`</a></td><td>Restore from backups, cross-region failover</td><td>Loss of a region / cluster</td></tr></tbody></table></div>
+<p>---</p></article>
+    <aside class="source-basis">
+      <strong>Source basis:</strong> <a href="https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/README.md" rel="noopener">README.md</a>. Corrections can be proposed through the public repository without submitting private data.
+    </aside>
+  </main>
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="site-footer-links"><a href="/">Home</a><a href="/guide.html">Project guide</a><a href="/architecture.html">Architecture</a><a href="/verification.html">Verification</a><a href="/publisher.html">Publisher</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="https://kim3310-doeon-kim-portfolio.pages.dev/">Resource atlas</a></div>
+      <p>Advertising may appear on this public editorial page after Google approves the site. Ads are not placed inside private, transactional, diagnostic, security-response, or operational workflows.</p>
+    </div>
+  </footer>
+</body>
+</html>
