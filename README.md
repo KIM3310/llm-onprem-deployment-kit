@@ -374,9 +374,20 @@ This repository bundles references to third-party container images (vLLM, Qdrant
 - Paid boundary: paid private deployment support, hardened values pack, and upgrade runbook subscription
 - Canonical URL: https://kim3310.github.io/llm-onprem-deployment-kit/
 - Lead capture: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry
+- Resource route: https://kim3310-doeon-kim-portfolio.pages.dev/resources/llm-onprem-deployment-kit/
 - Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers
 - Machine-readable offer: [docs/service-offer.json](docs/service-offer.json)
 - Search growth implementation: [docs/search-growth-implementation.md](docs/search-growth-implementation.md)
 - Revenue architecture: [docs/revenue-architecture.md](docs/revenue-architecture.md)
 
 <!-- search-growth-readme:end -->
+
+<!-- KIM3310:AD-DATA-PIVOT:START -->
+## Free Resource, Advertising, and Aggregate Data
+
+- [Public utility and architecture checklist](https://kim3310-doeon-kim-portfolio.pages.dev/resources/llm-onprem-deployment-kit/)
+- Revenue model: contextual advertising on the policy-eligible central resource page.
+- Aggregate value: anonymous aggregate private deployment topic demand and guide-open counts
+- Boundary: ads allowed only on public deployment-readiness guides; deployment plans, credentials, cluster details, and dashboards are ad-free
+- Consent defaults off, DNT/GPC fail closed, and personal or sensitive data is never sold.
+<!-- KIM3310:AD-DATA-PIVOT:END -->
