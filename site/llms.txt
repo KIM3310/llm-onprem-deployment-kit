@@ -3,7 +3,7 @@
 Purpose: deployment kit for Kubernetes, Helm, Terraform, observability, and security controls
 Free entry point: free reference architecture and Helm/Terraform starter kit
 Paid boundary: paid private deployment support, hardened values pack, and upgrade runbook subscription
-Canonical URL: https://kim3310.github.io/llm-onprem-deployment-kit/
+Canonical URL: https://llm-onprem-deployment-kit.pages.dev/
 Repository: https://github.com/KIM3310/llm-onprem-deployment-kit
 System architecture: https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/system-architecture.md
 Revenue architecture: https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/revenue-architecture.md

@@ -1,7 +1,7 @@
 {
   "name": "LLM On-Prem Deployment Kit",
   "slug": "llm-onprem-deployment-kit",
-  "canonical_url": "https://kim3310.github.io/llm-onprem-deployment-kit/",
+  "canonical_url": "https://llm-onprem-deployment-kit.pages.dev/",
   "repository_url": "https://github.com/KIM3310/llm-onprem-deployment-kit",
   "architecture_url": "https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/system-architecture.md",
   "revenue_architecture_url": "https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/revenue-architecture.md",
@@ -43,7 +43,7 @@
     "name": "LLM On-Prem Deployment Kit",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web, serverless, and local development environments",
-    "url": "https://kim3310.github.io/llm-onprem-deployment-kit/",
+    "url": "https://llm-onprem-deployment-kit.pages.dev/",
     "codeRepository": "https://github.com/KIM3310/llm-onprem-deployment-kit",
     "description": "Customer-owned private AI readiness baseline for Kubernetes, Helm, Terraform, secrets, observability, and explicit production-gap review.",
     "creator": {
@@ -58,7 +58,7 @@
         "price": "0",
         "priceCurrency": "USD",
         "availability": "https://schema.org/InStock",
-        "url": "https://kim3310.github.io/llm-onprem-deployment-kit/"
+        "url": "https://llm-onprem-deployment-kit.pages.dev/"
       },
       {
         "@type": "Offer",

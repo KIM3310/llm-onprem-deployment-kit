@@ -19,6 +19,7 @@ KUBECTL          ?= kubectl
 SHELLCHECK       ?= shellcheck
 YAMLLINT         ?= yamllint
 PYTHON           ?= python3
+CF_PAGES_PROJECT ?= llm-onprem-deployment-kit
 
 REPO_ROOT        := $(shell pwd)
 TF_MODULE_DIRS   := terraform/modules/azure-aks terraform/modules/aws-eks terraform/modules/gcp-gke
@@ -169,7 +170,7 @@ uninstall-stack:
 # ----------------------------------------------------------------------------
 # Operational
 # ----------------------------------------------------------------------------
-.PHONY: status smoke-test diag-bundle clean
+.PHONY: status smoke-test diag-bundle deploy-pages clean
 
 status:
 	@echo "==> Pods"
@@ -189,6 +190,9 @@ smoke-test:
 
 diag-bundle:
 	scripts/collect-diag-bundle.sh --namespace $(NAMESPACE) --release $(RELEASE)
+
+deploy-pages:
+	npx --yes wrangler@latest pages deploy site --project-name $(CF_PAGES_PROJECT)
 
 clean:
 	@echo "Removing local terraform caches..."

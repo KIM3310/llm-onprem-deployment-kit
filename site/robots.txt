@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kim3310.github.io/llm-onprem-deployment-kit/sitemap.xml
+Sitemap: https://llm-onprem-deployment-kit.pages.dev/sitemap.xml

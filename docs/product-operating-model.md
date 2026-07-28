@@ -2,7 +2,7 @@
 
 ## Public Demo
 
-- URL: https://kim3310.github.io/llm-onprem-deployment-kit/
+- URL: https://llm-onprem-deployment-kit.pages.dev/
 - Scope: credential-free synthetic demo surface for quick deployment review.
 
 Repository: `llm-onprem-deployment-kit`

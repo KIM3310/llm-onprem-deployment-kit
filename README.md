@@ -2,7 +2,7 @@
 
 ## Live Demo
 
-- [Open the public GitHub Pages demo](https://kim3310.github.io/llm-onprem-deployment-kit/)
+- [Open the public GitHub Pages demo](https://llm-onprem-deployment-kit.pages.dev/)
 - Scope: credential-free, synthetic-data demo for deployment reviewers and evaluators.
 
 > A customer-owned deployment baseline for evaluating private, hybrid, or air-gapped LLM infrastructure. It is designed for a bounded readiness sprint and must be adapted and validated before production use.
@@ -372,7 +372,7 @@ This repository bundles references to third-party container images (vLLM, Qdrant
 
 - Public entry: free reference architecture and Helm/Terraform starter kit
 - Paid boundary: paid private deployment support, hardened values pack, and upgrade runbook subscription
-- Canonical URL: https://kim3310.github.io/llm-onprem-deployment-kit/
+- Canonical URL: https://llm-onprem-deployment-kit.pages.dev/
 - Lead capture: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry
 - Resource route: https://kim3310-doeon-kim-portfolio.pages.dev/resources/llm-onprem-deployment-kit/
 - Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers

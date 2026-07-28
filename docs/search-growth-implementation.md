@@ -9,7 +9,7 @@ This repository now exposes a search-readable service surface in addition to the
 | Machine-readable offer | [docs/service-offer.json](./service-offer.json) |
 | Revenue architecture | [docs/revenue-architecture.md](./revenue-architecture.md) |
 | System architecture | [docs/system-architecture.md](./system-architecture.md) |
-| Public canonical URL | https://kim3310.github.io/llm-onprem-deployment-kit/ |
+| Public canonical URL | https://llm-onprem-deployment-kit.pages.dev/ |
 | Lead capture URL | https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry |
 | Repository resource route | https://kim3310-doeon-kim-portfolio.pages.dev/resources/llm-onprem-deployment-kit/ |
 | Commercial route | https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers |
