@@ -53,7 +53,6 @@ Run `scripts/airgap-mirror.sh --list` for the canonical, versioned list. As of v
 - `docker.io/vllm/vllm-openai:v0.4.3`
 - `docker.io/qdrant/qdrant:v1.9.2`
 - `docker.io/traefik:v3.0.3`
-- `docker.io/openpolicyagent/opa:0.65.0-envoy`
 - `docker.io/otel/opentelemetry-collector-contrib:0.100.0`
 - `docker.io/hashicorp/vault:1.16.2`
 - `ghcr.io/external-secrets/external-secrets:v0.9.18`
@@ -94,7 +93,7 @@ These are the most common questions we are asked by customer procurement teams. 
 > No. When installed from the airgap values file, no component initiates public connections.
 
 > **How are secrets managed?**
-> External Secrets Operator reads from the customer's HashiCorp Vault. Secrets are mounted as in-memory `tmpfs` volumes; they never land on disk and are not persisted to Git.
+> Optional External Secrets Operator resources read from a customer-approved store and create native Kubernetes Secrets. No secret belongs in Git, but etcd encryption, node handling, RBAC, rotation, and audit depend on customer controls and must be verified.
 
 > **Who holds the encryption keys?**
 > The customer. Terraform provisions CMEK via Azure Key Vault Premium / AWS KMS / GCP Cloud KMS. The vendor has no key material at any point.

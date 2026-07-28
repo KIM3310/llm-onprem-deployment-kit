@@ -1,13 +1,14 @@
 # Reference Architecture
 
-This document is the long-form companion to the Reference Architecture section of the root [README](../README.md). It describes the intended topology, the trust boundaries, the data flows, and the default scaling envelope.
+This document is the long-form companion to the Reference Architecture section of the root [README](../README.md). It separates the chart's current behavior from controls that a customer must add and verify during a readiness sprint.
 
 ## Topology
 
 ```mermaid
 flowchart TB
-    subgraph CustomerIdP[Customer IdP]
+    subgraph CustomerAccess[Customer Access Plane]
         OIDC[OIDC / SAML Provider]
+        APIGW[Customer API Gateway<br/>Identity + Quotas + Rate Limits]
     end
 
     subgraph Operator[Operator Plane]
@@ -19,14 +20,14 @@ flowchart TB
         subgraph VNet[Private VNet]
             subgraph Ingress[Ingress Tier]
                 ILB[Internal LoadBalancer]
-                GW[Traefik Deployment<br/>+ OPA Sidecar]
+                GW[Traefik Deployment<br/>TLS + Reverse Proxy]
             end
 
             subgraph K8s[Kubernetes Cluster]
                 direction TB
                 subgraph Apps[Workload Namespace: llm-stack]
                     VLLM[vLLM Deployment<br/>HPA on DCGM]
-                    QDRANT[Qdrant StatefulSet<br/>3 replicas + PVCs]
+                    QDRANT[Qdrant StatefulSet<br/>1 replica + PVC]
                     OTEL[OpenTelemetry<br/>Collector]
                 end
                 subgraph Plat[Platform Namespaces]
@@ -44,15 +45,15 @@ flowchart TB
         end
     end
 
-    OIDC -.->|OIDC discovery| GW
+    OIDC --> APIGW
     CLI --> Bastion
     Bastion -->|kubectl via private endpoint| K8s
+    APIGW --> ILB
     ILB --> GW
-    GW -->|mTLS| VLLM
-    GW -->|mTLS| QDRANT
-    VLLM --> OTEL
-    QDRANT --> OTEL
-    GW --> OTEL
+    GW -->|HTTP inside cluster| VLLM
+    VLLM -. metrics .-> OTEL
+    QDRANT -. metrics .-> OTEL
+    GW -. metrics .-> OTEL
     ESO --> VAULT
     VAULT -.->|envelope encryption| KMS
     VLLM -.->|image pull| REG
@@ -65,7 +66,7 @@ flowchart TB
 
 ### L1 - Network
 
-- **No public ingress.** The API server endpoint is private; the application load balancer is internal. Customers expose the service through their own reverse proxy or API management layer.
+- **Private ingress is an acceptance claim, not a render claim.** Modules and service annotations request private surfaces. The customer must verify provider routing, DNS, firewall, source ranges, and the absence of public paths.
 - **NAT only for bootstrap.** Production nodes do not require public egress once images are mirrored to the in-VNet registry.
 - **VPC/VNet peering** is used where the cluster needs to reach customer-managed data stores (Vault, observability).
 
@@ -73,7 +74,7 @@ flowchart TB
 
 - **Private control plane.** AKS `private_cluster_enabled=true`, EKS `endpoint_public_access=false`, GKE `enable_private_endpoint=true`.
 - **Azure RBAC / EKS access entries / Workload Identity** for operator access. Local accounts (`--admin`) disabled on AKS.
-- **Network policy default-deny** at the release namespace level.
+- **Network policy** is disabled in the baseline because model download may need egress. The air-gap overlay enables default-deny and requires approved gateway ingress sources.
 - **Pod security context:** `runAsNonRoot`, `readOnlyRootFilesystem`, `seccompProfile=RuntimeDefault`, drop all capabilities.
 - **Node pools:**
   - System pool for platform workloads (3 nodes, m6i/D-series/n2).
@@ -82,44 +83,43 @@ flowchart TB
 ### L3 - Application
 
 - **Inference** runs vLLM with the OpenAI-compatible API, tuned with `--max-model-len`, `--disable-log-requests`. HPA scales on GPU utilization via the DCGM exporter as a custom metric.
-- **Vector DB** is Qdrant as a 3-replica StatefulSet. Pod anti-affinity on `topology.kubernetes.io/zone` keeps replicas on separate zones. Data is persisted on encrypted PVCs.
-- **Gateway** is Traefik with an OPA sidecar that evaluates policy for every request. OPA decisions are observable via the OTel collector.
-- **Observability** is a single OTel collector Deployment that receives OTLP from the app, scrapes Prometheus endpoints from pods, and ships to customer-provided Prometheus / Loki / Tempo backends.
+- **Vector DB** is one Qdrant StatefulSet pod with one PVC. The chart rejects multiple replicas because it does not configure Qdrant distributed consensus.
+- **Gateway** is Traefik with a file-provider route to vLLM. It terminates optional TLS and forwards the bearer value; vLLM performs the built-in API-key check.
+- **Identity and policy** are customer responsibilities. The chart does not include OIDC/SAML, tenant authorization, quotas, rate limiting, tool policy, or east-west mTLS.
+- **Observability** configures a collector, metric scraping, and customer exporter targets. It does not make every request emit traces/logs or prove immutable audit retention.
 
 ### L4 - Data and secrets
 
-- **Secrets** live in HashiCorp Vault (customer-deployed), sealed by the cloud KMS. External Secrets Operator reconciles `ExternalSecret` resources into native Kubernetes Secrets. Nothing lives in Git.
+- **Secrets** are customer-owned. The baseline references an existing Kubernetes Secret; the optional air-gap overlay renders `ExternalSecret` resources against a customer-created store. ESO still creates native Kubernetes Secrets, so etcd encryption, RBAC, rotation, and audit must be verified.
 - **Container images** are pulled from a private registry (ACR / ECR / Artifact Registry) populated by `scripts/airgap-mirror.sh`.
 - **Model weights** are either baked into an image at mirror time or staged onto a dedicated read-only PVC.
 
-## Scaling envelope
+## Configured Envelope
 
-The reference architecture is sized for steady-state load of approx 50 RPS of chat completions on a 7-8B-class model.
+These are chart settings, not benchmark or capacity guarantees. GPU type, model, quantization, context length, batching, prompt shape, storage, and provider quotas materially change results.
 
 | Component | Replicas | CPU (req/limit) | Memory (req/limit) | GPU |
 |-----------|---------:|-----------------|--------------------|-----|
 | vLLM | 2-8 (HPA) | 4 / 8 | 60Gi / 80Gi | 1x A100 per replica |
-| Qdrant | 3 | 2 / 4 | 4Gi / 8Gi | - |
+| Qdrant | 1 | 2 / 4 | 4Gi / 8Gi | - |
 | Traefik | 2 | 0.2 / 0.5 | 256Mi / 512Mi | - |
-| OPA (sidecar) | - | 0.1 / 0.25 | 128Mi / 256Mi | - |
 | OTel Collector | 2 | 0.2 / 0.5 | 256Mi / 512Mi | - |
 
-Scale-up latency: approximately 8-12 minutes from HPA trigger to a new vLLM pod being Ready, dominated by GPU node provisioning (4-7 minutes) and model load time (2-5 minutes).
+HPA output requires a functioning external metrics adapter and DCGM metric pipeline. A readiness sprint must measure actual cold start, throughput, latency, saturation, and scale behavior in the selected customer region.
 
 ## Data flow: single inference request
 
 1. Client hits the internal LB at `https://llm.internal.example.com`.
-2. Traefik terminates TLS (cert from cert-manager), forwards to the OPA sidecar for authorization using the Envoy ext_authz pattern.
-3. OPA evaluates the policy bundle with the request (JWT, path, method). Decision is logged via OTel.
-4. On allow, Traefik routes to `svc/llm-stack-inference`. Envoy-style retries (3x on 5xx) are in effect.
-5. vLLM serves the completion. Request metadata (no content) is emitted via OTel to the collector.
-6. OTel collector fans out: metrics to Prometheus, logs to Loki, traces to Tempo.
+2. A customer API gateway should apply identity, tenant policy, quotas, and rate limits before traffic reaches the internal load balancer.
+3. Traefik terminates configured TLS and routes to `svc/llm-stack-inference`.
+4. vLLM compares the bearer value to the customer-owned API key and serves the completion when valid.
+5. Prometheus scraping and any application OTLP emission feed the collector. Complete request audit requires separate application and retention integration.
 
 ## Trust boundaries
 
 | Boundary | Crossed by | Mechanism |
 |----------|------------|-----------|
-| Customer -> Cluster | HTTPS requests | TLS to the internal LB; OPA authorization |
+| Customer -> Cluster | HTTPS requests | Customer gateway policy, internal routing, Traefik TLS, and vLLM API-key check |
 | Cluster -> KMS | Data-at-rest | Cloud IAM identity of the cluster (managed identity / IRSA / Workload Identity) |
 | Cluster -> Vault | Secret access | Kubernetes auth method on Vault, per-service account |
 | Operator -> Cluster | kubectl | Cloud IAM + Azure AD / IAM / Google IAM; API server private endpoint |

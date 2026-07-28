@@ -24,7 +24,6 @@ IMAGES=(
   "docker.io/vllm/vllm-openai:v0.4.3,vllm-openai"
   "docker.io/qdrant/qdrant:v1.9.2,qdrant"
   "docker.io/traefik:v3.0.3,traefik"
-  "docker.io/openpolicyagent/opa:0.65.0-envoy,opa"
   "docker.io/otel/opentelemetry-collector-contrib:0.100.0,opentelemetry-collector-contrib"
   "docker.io/hashicorp/vault:1.16.2,vault"
   "ghcr.io/external-secrets/external-secrets:v0.9.18,external-secrets"

@@ -5,7 +5,7 @@
 - [Open the public GitHub Pages demo](https://kim3310.github.io/llm-onprem-deployment-kit/)
 - Scope: credential-free, synthetic-data demo for deployment reviewers and evaluators.
 
-> An opinionated, enterprise-grade deployment kit for running LLM applications in private, hybrid, or airgapped cloud environments. Bring-your-own-infrastructure, BYO-model, security-and-compliance by default.
+> A customer-owned deployment baseline for evaluating private, hybrid, or air-gapped LLM infrastructure. It is designed for a bounded readiness sprint and must be adapted and validated before production use.
 
 [![Terraform Validate](https://github.com/KIM3310/llm-onprem-deployment-kit/actions/workflows/terraform-validate.yml/badge.svg)](https://github.com/KIM3310/llm-onprem-deployment-kit/actions/workflows/terraform-validate.yml)
 [![Helm Lint](https://github.com/KIM3310/llm-onprem-deployment-kit/actions/workflows/helm-lint.yml/badge.svg)](https://github.com/KIM3310/llm-onprem-deployment-kit/actions/workflows/helm-lint.yml)
@@ -26,7 +26,7 @@ A private/hybrid LLM deployment kit for organizations that cannot send sensitive
 | Users | Regulated enterprises, internal AI platform teams, security architects, and infrastructure operators. |
 | Technical path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
 | System scope | Terraform, Helm, air-gapped notes, compliance runbooks, model-routing boundaries, and infrastructure controls. |
-| Operating boundary | Templates are a deployment starting point; real environments need customer-specific threat modeling, secrets, IAM, and change control. |
+| Operating boundary | Customer owns the cloud account, cluster, registry, KMS, secrets, data, and logs. The chart supplies API-key protection and a reverse-proxy path, not end-user identity, tenant authorization, rate limiting, clustered vector state, or production evidence. |
 | Evaluation path | Inspect the infra modules, run validation commands where available, and review the operating notes. |
 
 ## Evaluation Path
@@ -86,7 +86,7 @@ By the time a customer has decided to buy, their deployment team is asking quest
 - "What does your disaster recovery look like, and can you show us an actual runbook?"
 - "Does this map to our SOC 2 and ISO 27001 controls?"
 
-`llm-onprem-deployment-kit` is the opinionated answer. It packages the infrastructure-as-code, Helm charts, runbooks, and compliance artifacts required to take an LLM application from a signed contract to a running, auditable production system inside a customer's environment.
+`llm-onprem-deployment-kit` packages infrastructure-as-code, a Helm baseline, runbooks, and control-mapping aids for a customer-owned readiness sprint. It shortens architecture review and pilot setup; it does not certify that a rendered template is a running, auditable production system.
 
 **Target audience:**
 
@@ -94,19 +94,19 @@ By the time a customer has decided to buy, their deployment team is asking quest
 - Forward deployed engineering teams at AI-native vendors who need a consistent deployment story across dozens of customer environments.
 - Security and compliance approvers who need to map a proposed deployment to existing control frameworks before granting change-management approval.
 
-If the question is "how fast can I get a demo LLM running on my laptop," this is not the right repository. If the question is "how do I ship an LLM workload to a customer's airgapped VNet and get through their security review without eight weeks of back-and-forth," this is.
+If the question is "how fast can I get a demo LLM running on my laptop," this is not the right repository. If the question is "what must we validate before a private LLM pilot can run inside the customer's account," this is the intended starting point.
 
 ---
 
 ## What you get
 
-- **Terraform across three clouds** - Production-quality modules for Azure AKS, AWS EKS, and GCP GKE with private-only control planes, GPU node pools, private endpoints, and customer-managed KMS integration.
-- **A single unified Helm chart** - `llm-stack` deploys the full application: vLLM inference, Qdrant vector database, Traefik gateway, OPA policy sidecar, OpenTelemetry collector, and External Secrets Operator wiring. One chart. Two values files (`values.yaml`, `values-airgap.yaml`).
+- **Terraform across three clouds** - Reviewable Azure AKS, AWS EKS, and GCP GKE module starters with private-cluster, GPU-pool, private-endpoint, and optional customer-managed encryption controls.
+- **A guarded Helm baseline** - `llm-stack` connects Traefik to API-key-protected vLLM, keeps Qdrant single-node until distributed consensus is explicitly designed, and optionally renders OpenTelemetry and External Secrets resources.
 - **Airgap runbooks and tooling** - `scripts/airgap-mirror.sh` enumerates every container image the kit ships with their pinned digests and mirrors them into a customer-controlled registry. A step-by-step runbook walks through the procedure.
 - **Compliance mappings** - Explicit control-by-control mapping for SOC 2 Type II and ISO 27001:2022 Annex A, plus an "airgap requirements" summary that most procurement teams can consume directly.
 - **Incident response playbook** - Severity levels, paging thresholds, customer handoff pattern, and a diagnostic-bundle collection script that produces the artifacts support actually needs.
 - **Architecture Decision Records** - Documented rationale for every load-bearing choice (vLLM vs TGI, Qdrant vs Weaviate, K8s vs ECS, secrets model, airgap image strategy), so downstream teams can challenge or extend decisions without reverse-engineering them.
-- **Minimal surface area for CI** - Three GitHub Actions workflows (`terraform-validate`, `helm-lint`, `shellcheck`) that make `main` provably green.
+- **Validation surface** - Terraform validation, Helm lint/render/schema checks, runtime-contract checks, and ShellCheck. Passing CI proves those repository checks only.
 
 ---
 
@@ -116,24 +116,24 @@ If the question is "how fast can I get a demo LLM running on my laptop," this is
 flowchart LR
     subgraph CustomerEdge[Customer Edge]
         IdP[Customer IdP<br/>OIDC / SAML]
+        Access[Customer API Gateway<br/>Identity + Quotas + Rate Limits]
         OpsUser[Operator / SRE]
     end
 
     subgraph PrivateNetwork[Private Network / VNet]
         subgraph IngressTier[Ingress Tier]
             PLB[Private Load Balancer]
-            TRAEFIK[Traefik Gateway<br/>+ OPA Sidecar]
+            TRAEFIK[Traefik Reverse Proxy<br/>TLS + Routing]
         end
 
         subgraph K8sCluster[Kubernetes Cluster - Private Control Plane]
             subgraph AppTier[Application Tier]
                 VLLM[vLLM Inference<br/>GPU Node Pool]
-                QDRANT[Qdrant Vector DB<br/>StatefulSet 3x]
+                QDRANT[Qdrant Vector DB<br/>Single StatefulSet Pod]
             end
             subgraph PlatformTier[Platform Tier]
                 OTEL[OpenTelemetry Collector]
                 ESO[External Secrets Operator]
-                OPA[OPA Policy Engine]
             end
         end
 
@@ -145,14 +145,14 @@ flowchart LR
         end
     end
 
-    OpsUser -->|Private endpoint| PLB
-    IdP -.->|OIDC discovery| TRAEFIK
+    OpsUser -->|Private endpoint| Access
+    IdP --> Access
+    Access --> PLB
     PLB --> TRAEFIK
     TRAEFIK --> VLLM
-    TRAEFIK --> QDRANT
     VLLM --> OTEL
-    QDRANT --> OTEL
-    TRAEFIK --> OTEL
+    QDRANT -. metrics .-> OTEL
+    TRAEFIK -. metrics .-> OTEL
     OTEL --> LOG
     ESO --> VAULT
     VAULT --> KMS
@@ -163,10 +163,10 @@ flowchart LR
 
 Notable properties of this architecture:
 
-- **No public endpoints.** The API server has a private-only control plane; the load balancer is internal; the container registry is private; the secret store is in-VNet.
-- **Customer-managed keys (CMK).** KMS / Key Vault / Cloud KMS holds the keys; the operator rotates, the vendor cannot exfiltrate.
-- **Policy at the gateway.** OPA sidecars enforce per-route authorization and can be updated without rebuilding the inference image.
-- **Single observability pipeline.** Every hop emits OpenTelemetry; the collector is the only component the customer has to whitelist.
+- **Private intent, customer verification.** Terraform and service annotations request private surfaces, but the customer must verify routes, DNS, firewall policy, and provider-specific load-balancer behavior.
+- **Customer-owned keys.** KMS / Key Vault / Cloud KMS options keep key administration in the customer account; the sprint records who can use and rotate each key.
+- **Narrow built-in auth.** vLLM validates one customer-owned API key. End-user identity, tenant policy, quotas, and rate limiting remain customer gateway responsibilities.
+- **Observable components, not audit completeness.** The chart configures metric scraping and collector exporters. Per-request application audit, immutable retention, alerts, and evidence collection require customer integration and acceptance testing.
 
 For the long form, see [`docs/architecture.md`](./docs/architecture.md).
 
@@ -198,24 +198,41 @@ scripts/airgap-mirror.sh --target "$TARGET_REGISTRY" --dry-run
 scripts/airgap-mirror.sh --target "$TARGET_REGISTRY"
 ```
 
-### 3. Install the llm-stack Helm chart
+### 3. Create customer-owned pilot secrets
+
+The baseline fails closed if its API-key or TLS secret is absent. For an evaluation cluster, create them directly; a customer pilot should use the approved secret manager and `ExternalSecret` path.
+
+```bash
+kubectl create namespace llm-stack
+kubectl -n llm-stack create secret generic llm-stack-inference-api-key \
+  --from-literal=api-key="$(openssl rand -hex 32)"
+openssl req -x509 -newkey rsa:3072 -nodes -days 30 \
+  -subj '/CN=llm.internal.example.com' \
+  -keyout /tmp/llm-stack.key -out /tmp/llm-stack.crt
+kubectl -n llm-stack create secret tls llm-stack-tls \
+  --key /tmp/llm-stack.key --cert /tmp/llm-stack.crt
+rm -f /tmp/llm-stack.key /tmp/llm-stack.crt
+```
+
+### 4. Install the llm-stack Helm chart
 
 ```bash
 helm upgrade --install llm-stack ./helm/llm-stack \
-  --namespace llm-stack --create-namespace \
+  --namespace llm-stack \
   --values ./helm/llm-stack/values.yaml \
-  --values ./helm/llm-stack/values-airgap.yaml \
   --atomic --timeout 10m
 ```
 
-### 4. Verify
+`values-airgap.yaml` is an overlay, not a turnkey install. It requires mirrored images and model weights, an approved `ClusterSecretStore`, customer observability endpoints, TLS material, network sources, storage, and an acceptance plan.
+
+### 5. Verify
 
 ```bash
 make status
 scripts/smoke-test.sh --namespace llm-stack --release llm-stack
 ```
 
-The smoke test hits the Traefik gateway, asserts that OPA is enforcing auth, sends one inference request end-to-end, and upserts a sample embedding into Qdrant.
+The smoke test checks the routed vLLM health path, sends an API-key-protected inference request, and checks the single Qdrant endpoint. It does not prove identity integration, quotas, rate limiting, high availability, backup recovery, immutable audit, or an SLO.
 
 ---
 
@@ -233,13 +250,13 @@ At-a-glance control summary:
 
 | Control theme | SOC 2 TSC | ISO 27001 Annex A | This kit provides |
 |---------------|-----------|-------------------|-------------------|
-| Logical access | CC6.1, CC6.2, CC6.3 | A.5.15, A.5.16, A.8.2 | OIDC/SAML gateway, OPA policy, K8s RBAC |
-| Encryption at rest | CC6.7 | A.8.24 | CMK via KMS/Key Vault, PVC-level encryption |
-| Encryption in transit | CC6.7 | A.8.24 | mTLS between services, TLS at gateway |
+| Logical access | CC6.1, CC6.2, CC6.3 | A.5.15, A.5.16, A.8.2 | vLLM API-key baseline plus customer-owned identity and gateway acceptance work |
+| Encryption at rest | CC6.7 | A.8.24 | Optional CMK/IaC controls; effective encryption must be evidenced in the customer account |
+| Encryption in transit | CC6.7 | A.8.24 | TLS at Traefik; east-west mTLS is not included |
 | Change management | CC8.1 | A.8.32 | Terraform + Helm + GitHub Actions CI |
-| Monitoring | CC7.1, CC7.2 | A.8.15, A.8.16 | OTel collector, Prometheus, Loki, alert rules |
+| Monitoring | CC7.1, CC7.2 | A.8.15, A.8.16 | OTel collector configuration and scrape surfaces; customer alerts and retention required |
 | Incident response | CC7.4, CC7.5 | A.5.24, A.5.26 | [`incident-response.md`](./docs/runbooks/incident-response.md), diag bundle |
-| Availability | A1.1, A1.2 | A.8.14 | HPA, PDB, multi-AZ node pools, DR runbook |
+| Availability | A1.1, A1.2 | A.8.14 | HPA/PDB and multi-zone infrastructure options; Qdrant remains single-node and no HA claim is made |
 
 ---
 
@@ -279,11 +296,11 @@ If the customer is truly multi-cloud, the `terraform/examples/airgapped-enterpri
 
 The full threat model is in [`docs/security-model.md`](./docs/security-model.md). The short version:
 
-- **Trust boundaries.** The customer's IdP is trusted. The customer's KMS is trusted. The vendor's container images are verified (cosign signatures) but otherwise treated as untrusted binaries running under least-privilege pod security.
-- **Default-deny networking.** `NetworkPolicy` denies all cross-namespace traffic by default; explicit allow rules exist for the known service graph only. Egress from the inference pods is restricted to the model registry and the OTel collector.
-- **Secrets never rest on disk.** External Secrets Operator pulls from Vault at startup; secrets are mounted as in-memory `tmpfs` volumes; no secret material is ever persisted to the node filesystem or to etcd unencrypted.
-- **Policy at the edge, not the app.** OPA sidecars evaluate request-level policy (tenant ID, rate limit, allow-list of tools). Application code remains simple and auditable.
-- **Tamper-evident audit.** Every inference request, every secret access, and every policy decision is emitted as a structured OTel event and shipped to the customer's log sink. Log records are immutable at the customer's log store.
+- **Trust boundaries.** The customer owns the IdP, cloud account, cluster, registry, KMS, secrets, model weights, prompts, vector data, and logs. Vendor access, when needed, is time-bounded and customer-approved.
+- **Networking.** Default values keep `NetworkPolicy` off because model download may need egress. The air-gap overlay enables default-deny and requires approved ingress namespaces or CIDRs. Effective isolation must be tested in-cluster.
+- **Secrets.** The baseline references an existing Kubernetes Secret. Optional ESO resources copy remote values into Kubernetes Secrets, which may be stored in etcd; customer encryption-at-rest, RBAC, rotation, and audit controls determine the real posture.
+- **Authorization.** vLLM API-key validation is the only built-in request control. Customer identity, tenant authorization, quotas, tool policy, and rate limits are excluded from the chart.
+- **Observability.** Metric and collector configuration are provided. Complete request audit, immutable storage, alerting, redaction, retention, and evidence of control operation are customer acceptance items.
 
 ---
 
@@ -310,7 +327,7 @@ See [`docs/adr/002-vllm-vs-tgi-selection.md`](./docs/adr/002-vllm-vs-tgi-selecti
 
 ### Replace the vector database
 
-`values.yaml` has a top-level `vectorDb:` block. Qdrant is the default; Weaviate, pgvector, and Milvus all deploy cleanly as long as they expose a service and (optionally) a StatefulSet with PVCs. See [`docs/adr/003-vector-db-selection.md`](./docs/adr/003-vector-db-selection.md).
+`values.yaml` has a top-level `vectorDb:` block, but the current templates implement Qdrant only. The validation gate rejects more than one replica because distributed consensus is not configured. Replacing the engine or enabling clustered Qdrant requires new templates, migration/backup tests, and a customer-specific acceptance plan. See [`docs/adr/003-vector-db-selection.md`](./docs/adr/003-vector-db-selection.md).
 
 ---
 
@@ -329,7 +346,7 @@ This kit is part of a wider stack for shipping LLM applications into enterprise 
 
 [MIT](./LICENSE) (c) 2026 Doeon Kim.
 
-This repository bundles references to third-party container images (vLLM, Qdrant, Traefik, OPA, OpenTelemetry Collector) which retain their own upstream licenses. See [`docs/runbooks/airgap-image-mirror.md`](./docs/runbooks/airgap-image-mirror.md) for the full image inventory.
+This repository bundles references to third-party container images (vLLM, Qdrant, Traefik, OpenTelemetry Collector, and External Secrets Operator) which retain their own upstream licenses. See [`docs/runbooks/airgap-image-mirror.md`](./docs/runbooks/airgap-image-mirror.md) for the full image inventory.
 
 ## Cloud + AI Architecture
 
@@ -356,7 +373,7 @@ This repository bundles references to third-party container images (vLLM, Qdrant
 - Public entry: free reference architecture and Helm/Terraform starter kit
 - Paid boundary: paid private deployment support, hardened values pack, and upgrade runbook subscription
 - Canonical URL: https://kim3310.github.io/llm-onprem-deployment-kit/
-- Lead capture: https://github.com/KIM3310/llm-onprem-deployment-kit/issues/new?template=service-inquiry.yml&title=Private+workspace+inquiry%3A+LLM+On-Prem+Deployment+Kit
+- Lead capture: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry
 - Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers
 - Machine-readable offer: [docs/service-offer.json](docs/service-offer.json)
 - Search growth implementation: [docs/search-growth-implementation.md](docs/search-growth-implementation.md)

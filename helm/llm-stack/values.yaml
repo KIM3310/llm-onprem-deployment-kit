@@ -1,8 +1,9 @@
 # ----------------------------------------------------------------------------
 # llm-stack - default values
 #
-# Production-safe defaults. Override per environment in a second values file
-# (see values-airgap.yaml, values-dev.yaml).
+# Evaluation baseline. It deliberately fails to start when required TLS or API
+# key secrets are absent. Customer-specific production controls are not implied.
+# Override per environment in a second values file.
 # ----------------------------------------------------------------------------
 
 nameOverride: ""
@@ -49,7 +50,7 @@ serviceAccount:
 # ----------------------------------------------------------------------------
 inference:
   enabled: true
-  replicaCount: 2
+  replicaCount: 1
 
   image:
     repository: vllm/vllm-openai
@@ -74,6 +75,13 @@ inference:
       - "--disable-log-requests"
 
   env: []
+
+  auth:
+    # vLLM validates the bearer value. The chart does not provide user identity,
+    # tenant authorization, quotas, or rate limiting.
+    enabled: true
+    existingSecret: llm-stack-inference-api-key
+    key: api-key
 
   service:
     type: ClusterIP
@@ -120,14 +128,18 @@ inference:
       failureThreshold: 3
 
   autoscaling:
-    enabled: true
+    # Requires a customer-installed external metrics adapter and a validated
+    # GPU metric pipeline. Keep disabled in the portable baseline.
+    enabled: false
     minReplicas: 2
     maxReplicas: 8
     metricName: DCGM_FI_DEV_GPU_UTIL
     targetAverageValue: 70
 
   pdb:
-    enabled: true
+    # A PDB with one replica blocks voluntary disruption without adding
+    # availability. Enable only in a customer overlay with multiple replicas.
+    enabled: false
     minAvailable: 1
 
   modelVolume:
@@ -146,7 +158,9 @@ vectorDb:
     tag: "v1.9.2"
     pullPolicy: IfNotPresent
 
-  replicaCount: 3
+  # This chart does not configure Qdrant distributed consensus. Keep one replica
+  # until a customer-specific clustered Qdrant design is supplied and tested.
+  replicaCount: 1
 
   service:
     type: ClusterIP
@@ -173,7 +187,7 @@ vectorDb:
     telemetryDisabled: true
 
 # ----------------------------------------------------------------------------
-# Gateway (Traefik + OPA)
+# Gateway (Traefik reverse proxy)
 # ----------------------------------------------------------------------------
 gateway:
   enabled: true
@@ -194,7 +208,8 @@ gateway:
         service.beta.kubernetes.io/azure-load-balancer-internal: "true"
         service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
         networking.gke.io/load-balancer-type: "Internal"
-      port: 443
+      httpPort: 80
+      httpsPort: 443
 
     resources:
       limits:
@@ -204,48 +219,14 @@ gateway:
         memory: "256Mi"
         cpu: "200m"
 
-  opa:
+  tls:
     enabled: true
-    image:
-      repository: openpolicyagent/opa
-      tag: "0.65.0-envoy"
-      pullPolicy: IfNotPresent
-
-    # Inline policy. Override with a ConfigMap reference in production.
-    policy: |
-      package authz
-
-      default allow := false
-
-      allow if {
-        input.attributes.request.http.method == "GET"
-        startswith(input.attributes.request.http.path, "/health")
-      }
-
-      allow if {
-        valid_token
-        allowed_route
-      }
-
-      valid_token if {
-        input.attributes.request.http.headers.authorization
-        startswith(input.attributes.request.http.headers.authorization, "Bearer ")
-      }
-
-      allowed_route if {
-        startswith(input.attributes.request.http.path, "/v1/")
-      }
-
-    resources:
-      limits:
-        memory: "256Mi"
-        cpu: "250m"
-      requests:
-        memory: "128Mi"
-        cpu: "100m"
+    secretName: llm-stack-tls
 
   ingress:
-    enabled: true
+    # Optional integration with a customer-installed ingress controller. The
+    # default internal LoadBalancer service can be used without this object.
+    enabled: false
     className: traefik
     hostname: llm.internal.example.com
     tls:
@@ -283,7 +264,7 @@ observability:
         cpu: "200m"
 
   serviceMonitor:
-    enabled: true
+    enabled: false
     interval: 30s
     labels:
       release: prometheus
@@ -292,7 +273,9 @@ observability:
 # Secrets (External Secrets Operator)
 # ----------------------------------------------------------------------------
 externalSecrets:
-  enabled: true
+  # Disabled in the baseline because the ESO CRD and store are customer
+  # resources. values-airgap.yaml enables the integration explicitly.
+  enabled: false
   secretStoreRef:
     name: vault-backend
     kind: ClusterSecretStore
@@ -300,25 +283,23 @@ externalSecrets:
   refreshInterval: 1h
 
   secrets:
-    - name: llm-stack-jwt
+    - name: llm-stack-inference-api-key
       data:
-        - secretKey: jwt-signing-key
+        - secretKey: api-key
           remoteRef:
-            key: llm-stack/jwt
-            property: signing_key
-    - name: llm-stack-model-registry
-      data:
-        - secretKey: registry-token
-          remoteRef:
-            key: llm-stack/registry
-            property: token
+            key: llm-stack/inference-api-key
 
 # ----------------------------------------------------------------------------
 # Network policy (default-deny)
 # ----------------------------------------------------------------------------
 networkPolicy:
-  enabled: true
+  # The baseline may need model-registry egress. Airgap values enable the
+  # default-deny policy only after images and model weights are staged.
+  enabled: false
   # Additional namespaces that are allowed to call the gateway (e.g. the
   # customer's reverse proxy or API gateway namespace).
   allowedIngressNamespaces:
     - monitoring
+  # Add customer-controlled source CIDRs when an internal load balancer reaches
+  # gateway pods directly rather than through an ingress-controller namespace.
+  allowedIngressCidrs: []

@@ -23,5 +23,5 @@ spec:
               service:
                 name: {{ include "llm-stack.fullname" . }}-gateway
                 port:
-                  name: https
+                  name: http
 {{- end }}

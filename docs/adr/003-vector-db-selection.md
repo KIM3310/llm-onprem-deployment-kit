@@ -9,10 +9,10 @@ Accepted. Revisit if pgvector catches up on operational characteristics at high-
 The vector database stores embeddings produced upstream by the RAG pipeline (see [`enterprise-llm-adoption-kit`](https://github.com/KIM3310/enterprise-llm-adoption-kit)) and serves approximate-nearest-neighbor queries for retrieval. Requirements:
 
 - **Airgap-friendly.** Single-container deployment with no mandatory external services.
-- **Self-hosted K8s deployment.** Must ship as a StatefulSet with PVCs and pod anti-affinity; high availability across 2-3 zones.
+- **Self-hosted K8s deployment.** Must ship as a StatefulSet with a PVC. High availability requires a separately designed distributed topology.
 - **HTTP and gRPC client support.** Most RAG pipelines assume HTTP; gRPC desirable for latency-sensitive paths.
 - **Operational simplicity.** Snapshot/backup API, clear upgrade path, bounded memory footprint.
-- **Scale envelope.** Tens of millions of vectors at 1024-1536 dimensions, with sub-100ms p95 retrieval at 50 QPS.
+- **Scale envelope.** Must be measured against the customer's vector count, dimensions, filter shape, write rate, and latency target.
 
 Candidates evaluated:
 
@@ -26,8 +26,8 @@ Candidates evaluated:
 We adopt **Qdrant** as the default vector database for `llm-stack`.
 
 - Default image: `qdrant/qdrant:v1.9.2`.
-- Chart topology: StatefulSet with 3 replicas, one PVC per replica (`accessModes: [ReadWriteOnce]`, default 200 GiB, customer StorageClass).
-- Anti-affinity: preferred across `topology.kubernetes.io/zone`.
+- Chart topology: one StatefulSet replica with one PVC (`accessModes: [ReadWriteOnce]`, default 200 GiB, customer StorageClass).
+- Validation rejects `replicaCount > 1` because the chart does not configure Qdrant distributed consensus.
 - Services: both HTTP (6333) and gRPC (6334) exposed via a ClusterIP Service and a headless Service for StatefulSet DNS.
 
 ## Consequences
@@ -36,8 +36,7 @@ We adopt **Qdrant** as the default vector database for `llm-stack`.
 
 - **Operationally simple.** Single binary, one process, sane defaults. Helm deployment is short and obvious.
 - **Airgap-clean.** No mandatory external services; telemetry can be disabled (`QDRANT__TELEMETRY_DISABLED=true`).
-- **Fast.** Rust implementation with well-tuned HNSW; consistently competitive on public benchmarks at 1-10M vector scale.
-- **HTTP + gRPC.** Both interfaces first-class; gRPC matters for low-latency consumers (~20-40% faster in our measurements at equal payload sizes).
+- **HTTP + gRPC.** Both interfaces are available for customer evaluation.
 - **Snapshot API.** `/collections/<c>/snapshots` endpoint is trivial to integrate with the DR runbook.
 - **License.** Apache 2.0. No worry about a license change mid-lifecycle.
 - **Small image.** approx 200 MB; mirrors quickly.
@@ -51,10 +50,9 @@ We adopt **Qdrant** as the default vector database for `llm-stack`.
 
 ### Mitigations
 
-- Chart keeps the config surface narrow and documented in `values.yaml`. A customer who wants to swap to Weaviate / Milvus / pgvector can override `vectorDb.engine` and reuse the StatefulSet+Service wiring (engine-agnostic).
+- Chart keeps the Qdrant config surface narrow and documented in `values.yaml`. Other engines require new templates and tests; changing `vectorDb.engine` alone is insufficient.
 - Disaster recovery runbook includes an explicit Qdrant snapshot restore procedure.
-- PVC anti-affinity + PDB protects against zonal loss.
-- Observability surfaces both HTTP and gRPC metrics via the OTel collector.
+- A controlled pilot must test snapshot creation and restore before private vector data is accepted.
 
 ## Alternatives Considered
 
@@ -70,7 +68,7 @@ Leading alternative, and in many ways the more polished product.
 
 **When to prefer:** customer wants built-in hybrid search and reranking with minimal application code, and has an airgap-compatible module configuration.
 
-To swap to Weaviate: override `vectorDb.engine=weaviate`, `vectorDb.image.repository=semitechnologies/weaviate`, `vectorDb.service.httpPort=8080`, and update the `ExternalSecret` references accordingly.
+To swap to Weaviate, add engine-specific StatefulSet/Deployment, Service, persistence, health, backup, network, and migration templates plus contract tests.
 
 ### Milvus
 
@@ -98,10 +96,10 @@ Reuses existing Postgres infrastructure.
 
 ## Operational implications
 
-- Chart defaults 3 replicas with anti-affinity on zone. Minimum for HA.
+- Chart defaults to one replica and makes no HA claim.
 - PVC size defaults to 200 GiB; override via `vectorDb.persistence.size`.
 - Snapshot procedure: see `docs/runbooks/disaster-recovery.md` Scenario B.
-- Memory footprint at 10M 1536-d vectors with HNSW is approximately 70-90 GiB total across replicas; resources.request should be sized accordingly.
+- Resource requests must be derived from a customer dataset benchmark rather than this repository's defaults.
 
 ## Open questions / follow-ups
 

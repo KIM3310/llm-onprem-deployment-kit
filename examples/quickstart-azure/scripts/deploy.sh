@@ -32,13 +32,13 @@ gpu_node_count      = 1
 standard_node_count = 3
 EOF
 
-echo "[1/6] terraform init"
+echo "[1/5] terraform init"
 terraform init -input=false
 
-echo "[2/6] terraform apply"
+echo "[2/5] terraform apply"
 terraform apply -auto-approve
 
-echo "[3/6] az aks get-credentials"
+echo "[3/5] az aks get-credentials"
 az aks get-credentials \
     --resource-group "$RESOURCE_GROUP" \
     --name "$CLUSTER_NAME" \
@@ -46,35 +46,21 @@ az aks get-credentials \
 
 kubectl wait --for=condition=Ready nodes --all --timeout=10m
 
-echo "[4/6] Install External Secrets Operator"
-if ! helm status external-secrets -n external-secrets >/dev/null 2>&1; then
-    helm repo add external-secrets https://charts.external-secrets.io
-    helm repo update
-    helm install external-secrets external-secrets/external-secrets \
-        --namespace external-secrets --create-namespace \
-        --set installCRDs=true \
-        --wait
-fi
-
-KV_NAME="$(terraform output -raw key_vault_name 2>/dev/null || echo "")"
-if [[ -z "$KV_NAME" ]]; then
-    echo "ERROR: Key Vault name not found in Terraform outputs" >&2
-    exit 1
-fi
-
-echo "[5/6] Seed Key Vault with secrets"
+echo "[4/5] Create evaluation API-key Secret"
 INFERENCE_API_KEY="$(openssl rand -hex 32)"
-az keyvault secret set --vault-name "$KV_NAME" --name inference-api-key --value "$INFERENCE_API_KEY" >/dev/null
-az keyvault secret set --vault-name "$KV_NAME" --name vector-db-password --value "$(openssl rand -hex 16)" >/dev/null
+kubectl create namespace llm-stack --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n llm-stack create secret generic llm-stack-inference-api-key \
+    --from-literal="api-key=$INFERENCE_API_KEY" \
+    --dry-run=client -o yaml | kubectl apply -f -
 
 cd "$REPO_ROOT/helm/llm-stack"
 
-echo "[6/6] helm install llm-stack"
+echo "[5/5] helm install evaluation stack"
 helm install llm-stack . \
-    --namespace llm-stack --create-namespace \
+    --namespace llm-stack \
     --values values.yaml \
-    --set "externalSecrets.azureKeyVault.vaultUrl=https://${KV_NAME}.vault.azure.net/" \
-    --set "externalSecrets.azureKeyVault.tenantId=$(az account show --query tenantId -o tsv)" \
+    --set "gateway.tls.enabled=false" \
+    --set "gateway.traefik.service.type=ClusterIP" \
     --wait --timeout 20m
 
 echo ""
@@ -83,14 +69,6 @@ echo "  Deploy complete"
 echo "==============================================="
 echo ""
 echo "Next:"
-echo "  1. Port-forward the gateway:"
-echo "     kubectl -n llm-stack port-forward svc/llm-stack-gateway 8080:80"
-echo ""
-echo "  2. Test the inference endpoint:"
-echo "     curl -H \"Authorization: Bearer $INFERENCE_API_KEY\" http://localhost:8080/v1/completions"
-echo ""
-echo "  3. Run the smoke test:"
-echo "     bash $REPO_ROOT/scripts/smoke-test.sh --endpoint http://localhost:8080 --api-key $INFERENCE_API_KEY"
-echo ""
-echo "Inference API key (save this):"
-echo "  $INFERENCE_API_KEY"
+echo "  Run: bash $REPO_ROOT/scripts/smoke-test.sh --namespace llm-stack --release llm-stack"
+echo "The smoke test reads the API key from the customer-owned Kubernetes Secret without printing it."
+echo "Rotate or delete the key at teardown."

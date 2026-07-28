@@ -19,14 +19,17 @@ This repository is packaged as a concrete system surface, not a loose code sampl
 | Area | Position |
 | --- | --- |
 | Target users | operations leaders and platform owners |
-| Service wedge | operations workbench, integration sprint, and support plan |
+| Service wedge | Private AI Readiness Sprint for one customer-owned deployment decision |
 | System signal | architecture clarity, local verification, trust boundaries, and repeatable operator workflow |
-| Delivery shape | Fixed-scope pilot, integration sprint, and handoff-ready operating pack |
+| Delivery shape | Use-case scorecard, responsibility matrix, boundary map, deployment adaptation plan, evaluation plan, and go or no-go record |
 | Expansion path | Add customer-specific adapters, policy controls, observability, and support SLAs after the pilot proves value |
 
 ## Enterprise Trust Boundary
 
 - Keep credentials out of the repository and require environment-based configuration for live integrations.
+- Keep the cloud account, cluster, registry, KMS, secrets, prompts, model weights, vector data, and telemetry customer-owned.
+- Treat the vLLM API key as a narrow transport control, not end-user identity, tenant authorization, quotas, or rate limiting.
+- Keep Qdrant single-node until distributed consensus, backup, restore, and failure behavior are designed and tested.
 - Treat generated screenshots, fixtures, and sample data as non-customer proof assets unless explicitly approved.
 - Keep CI, repository-surface validation, architecture manifest checks, and secret scanning green before presenting the repo externally.
 - Use the architecture blueprint as the source of truth for cloud, AI, data, and operational boundaries.
@@ -52,4 +55,4 @@ This repository is packaged as a concrete system surface, not a loose code sampl
 
 ## Service Next Step
 
-Turn the repo into a customer-facing offer by pairing the proof surface with one discovery question, one measurable success metric, and one bounded follow-up path. The smallest viable package should be easy to verify and bounded enough to deliver without custom platform work.
+Route qualified demand to the `private-ai-readiness-sprint` lane. The paid outcome is a defensible go or no-go decision for one use case, with customer ownership, production gaps, cost, evaluation, rollback, and next-stage scope made explicit.

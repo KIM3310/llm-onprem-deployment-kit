@@ -1,0 +1,27 @@
+{{- if and .Values.gateway.enabled (not .Values.inference.enabled) -}}
+{{- fail "gateway.enabled=true requires inference.enabled=true" -}}
+{{- end -}}
+
+{{- if and .Values.inference.enabled .Values.inference.auth.enabled (not .Values.inference.auth.existingSecret) -}}
+{{- fail "inference.auth.existingSecret is required when inference.auth.enabled=true" -}}
+{{- end -}}
+
+{{- if and .Values.inference.enabled .Values.inference.auth.enabled (not .Values.inference.auth.key) -}}
+{{- fail "inference.auth.key is required when inference.auth.enabled=true" -}}
+{{- end -}}
+
+{{- if gt (int .Values.vectorDb.replicaCount) 1 -}}
+{{- fail "vectorDb.replicaCount must remain 1: this chart does not configure Qdrant distributed consensus" -}}
+{{- end -}}
+
+{{- if and .Values.gateway.enabled .Values.gateway.tls.enabled (not .Values.gateway.tls.secretName) -}}
+{{- fail "gateway.tls.secretName is required when gateway.tls.enabled=true" -}}
+{{- end -}}
+
+{{- if and .Values.gateway.ingress.enabled (eq .Values.gateway.ingress.hostname "llm.internal.example.com") -}}
+{{- fail "replace gateway.ingress.hostname before enabling the Ingress" -}}
+{{- end -}}
+
+{{- if and .Values.networkPolicy.enabled (not (or .Values.networkPolicy.allowedIngressNamespaces .Values.networkPolicy.allowedIngressCidrs)) -}}
+{{- fail "networkPolicy requires at least one approved ingress namespace or CIDR" -}}
+{{- end -}}

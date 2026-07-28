@@ -10,7 +10,7 @@ This repository now exposes a search-readable service surface in addition to the
 | Revenue architecture | [docs/revenue-architecture.md](./revenue-architecture.md) |
 | System architecture | [docs/system-architecture.md](./system-architecture.md) |
 | Public canonical URL | https://kim3310.github.io/llm-onprem-deployment-kit/ |
-| Lead capture URL | https://github.com/KIM3310/llm-onprem-deployment-kit/issues/new?template=service-inquiry.yml&title=Private+workspace+inquiry%3A+LLM+On-Prem+Deployment+Kit |
+| Lead capture URL | https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry |
 | Commercial route | https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers |
 
 ## Search Positioning
@@ -28,5 +28,5 @@ The public surface stays crawlable and free. Paid value starts when a visitor wa
 
 - Keep the sitemap and robots file aligned with the final production domain.
 - Submit the canonical URL and sitemap in Google Search Console after the domain is connected.
-- The lead-capture path is a GitHub Issue Form so private workspace and paid-package requests create a trackable queue before payment infrastructure is added.
+- The lead-capture path is the central Cloudflare D1 private inquiry form at https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry; public GitHub issues are not used for confidential or commercial scoping.
 - Keep exact free-tier quotas out of public promises because provider limits change.

@@ -48,10 +48,6 @@ gateway:
     image:
       repository: traefik
       tag: "v3.0.3"
-  opa:
-    image:
-      repository: opa
-      tag: "0.65.0-envoy"
 
 observability:
   otelCollector:
@@ -67,8 +63,11 @@ observability:
       otlp:
         endpoint: "tempo.obs.internal.customer.example:4317"
         insecure: false
+  serviceMonitor:
+    enabled: true
 
 externalSecrets:
+  enabled: true
   secretStoreRef:
     name: vault-internal
     kind: ClusterSecretStore

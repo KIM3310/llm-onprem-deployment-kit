@@ -4,8 +4,8 @@
 # smoke-test.sh - Post-deploy smoke test for the llm-stack Helm release.
 #
 # Exercises:
-#   1. The gateway returns 200 on /health (OPA must allow).
-#   2. An OpenAI-compatible /v1/models call against vLLM succeeds.
+#   1. The Traefik-to-vLLM route returns 200 on /health.
+#   2. An API-key-protected /v1/models call through Traefik succeeds.
 #   3. Qdrant is reachable and /collections returns 200.
 #
 # Usage:
@@ -65,7 +65,6 @@ command -v kubectl >/dev/null 2>&1 || die "kubectl not in PATH"
 command -v curl >/dev/null 2>&1 || die "curl not in PATH"
 
 GATEWAY_SVC="${RELEASE}-gateway"
-INFERENCE_SVC="${RELEASE}-inference"
 QDRANT_SVC="${RELEASE}-qdrant"
 
 cleanup_pids=()
@@ -81,10 +80,7 @@ trap cleanup EXIT
 # ------------------------------------------------------------------------------
 log "Port-forwarding services..."
 
-kubectl -n "${NAMESPACE}" port-forward "svc/${GATEWAY_SVC}" 18443:443 >/dev/null 2>&1 &
-cleanup_pids+=("$!")
-
-kubectl -n "${NAMESPACE}" port-forward "svc/${INFERENCE_SVC}" 18000:8000 >/dev/null 2>&1 &
+kubectl -n "${NAMESPACE}" port-forward "svc/${GATEWAY_SVC}" 18080:80 >/dev/null 2>&1 &
 cleanup_pids+=("$!")
 
 kubectl -n "${NAMESPACE}" port-forward "svc/${QDRANT_SVC}" 16333:6333 >/dev/null 2>&1 &
@@ -92,7 +88,7 @@ cleanup_pids+=("$!")
 
 # Wait for ports
 for i in $(seq 1 30); do
-  if curl -sk --max-time 2 https://localhost:18443/ping >/dev/null 2>&1; then
+  if curl -s --max-time 2 http://localhost:18080/ping >/dev/null 2>&1; then
     break
   fi
   sleep 1
@@ -103,11 +99,24 @@ done
 
 log "Port-forwards established."
 
+if [[ -z "${BEARER}" ]]; then
+  encoded_key=$(kubectl -n "${NAMESPACE}" get secret "${RELEASE}-inference-api-key" \
+    -o jsonpath='{.data.api-key}' 2>/dev/null || true)
+  [[ -n "${encoded_key}" ]] || die "Bearer token missing and ${RELEASE}-inference-api-key was not found."
+  if decoded_key=$(printf '%s' "${encoded_key}" | base64 --decode 2>/dev/null); then
+    BEARER="${decoded_key}"
+  else
+    BEARER=$(printf '%s' "${encoded_key}" | base64 -D)
+  fi
+fi
+auth_arg=(-H "Authorization: Bearer ${BEARER}")
+
 # ------------------------------------------------------------------------------
-# Test 1: Gateway /health returns 200 (OPA should allow unauthenticated)
+# Test 1: Routed vLLM /health returns 200
 # ------------------------------------------------------------------------------
 log "[1/3] Gateway /health"
-code=$(curl -sk -o /dev/null -w '%{http_code}' --max-time 10 https://localhost:18443/health || true)
+code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
+  "${auth_arg[@]}" http://localhost:18080/health || true)
 if [[ "${code}" != "200" ]]; then
   die "Gateway /health returned ${code}, expected 200."
 fi
@@ -117,11 +126,7 @@ log "  OK (http ${code})"
 # Test 2: vLLM /v1/models
 # ------------------------------------------------------------------------------
 log "[2/3] vLLM /v1/models"
-auth_arg=()
-if [[ -n "${BEARER}" ]]; then
-  auth_arg=(-H "Authorization: Bearer ${BEARER}")
-fi
-resp=$(curl -s --max-time 20 "${auth_arg[@]}" http://localhost:18000/v1/models || true)
+resp=$(curl -s --max-time 20 "${auth_arg[@]}" http://localhost:18080/v1/models || true)
 if ! echo "${resp}" | grep -q '"data"'; then
   die "vLLM /v1/models did not return a data field. Response: ${resp}"
 fi

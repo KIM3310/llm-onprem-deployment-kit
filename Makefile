@@ -68,6 +68,7 @@ help:
 verify:
 	$(PYTHON) scripts/validate_repository_surface.py
 	$(PYTHON) scripts/validate_architecture_blueprint.py
+	$(PYTHON) tests/commercial-boundary-test.py
 	./tests/script-argument-test.sh
 
 script-arg-test:
@@ -108,6 +109,7 @@ helm-lint: check-helm
 	$(HELM) lint $(HELM_CHART_DIR)
 	$(HELM) lint $(HELM_CHART_DIR) --values $(HELM_CHART_DIR)/values-airgap.yaml
 	$(HELM) lint $(HELM_CHART_DIR) --values $(HELM_CHART_DIR)/values-dev.yaml
+	./tests/helm-runtime-contract-test.sh
 
 shell-lint: check-shellcheck
 	$(SHELLCHECK) scripts/*.sh tests/*.sh examples/**/scripts/*.sh

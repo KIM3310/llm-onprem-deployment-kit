@@ -7,7 +7,7 @@ Canonical URL: https://kim3310.github.io/llm-onprem-deployment-kit/
 Repository: https://github.com/KIM3310/llm-onprem-deployment-kit
 System architecture: https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/system-architecture.md
 Revenue architecture: https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/revenue-architecture.md
-Lead capture: https://github.com/KIM3310/llm-onprem-deployment-kit/issues/new?template=service-inquiry.yml&title=Private+workspace+inquiry%3A+LLM+On-Prem+Deployment+Kit
+Lead capture: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry
 Commercial route: https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers
 
 Use this project as a runnable or inspectable reference for LLM On-Prem Deployment Kit demo, LLM On-Prem Deployment Kit system architecture, LLM On-Prem Deployment Kit developer tool, deployment kit for Kubernetes, Helm, Terraform, observability, and security controls service.

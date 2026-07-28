@@ -12,8 +12,12 @@ metadata:
 spec:
   type: {{ .Values.gateway.traefik.service.type }}
   ports:
+    - name: http
+      port: {{ .Values.gateway.traefik.service.httpPort }}
+      targetPort: web
+      protocol: TCP
     - name: https
-      port: {{ .Values.gateway.traefik.service.port }}
+      port: {{ .Values.gateway.traefik.service.httpsPort }}
       targetPort: websecure
       protocol: TCP
     - name: metrics

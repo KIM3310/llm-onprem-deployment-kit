@@ -45,10 +45,10 @@ Concretely, that means:
 
 - **Portability.** One Helm chart covers all three clouds. Adding a fourth cloud (OCI, IBM Cloud, or on-premise OpenShift) is a new Terraform module, not a new application stack.
 - **Familiar to customers.** Enterprise infra teams recognize and can audit Kubernetes constructs: NetworkPolicy, PodSecurityAdmission, RBAC.
-- **Ecosystem integration.** Prometheus Operator, External Secrets Operator, cert-manager, and OPA all have first-class Kubernetes integrations. The chart consumes these as CRDs, not as vendor-specific services.
-- **Policy expressiveness.** OPA sidecars, Kyverno ClusterPolicies, and admission webhooks can all be layered on. ECS/Nomad require bespoke policy machinery.
+- **Ecosystem integration.** Prometheus Operator, External Secrets Operator, cert-manager, and policy controllers can be added where the customer already operates them. The chart optionally renders ServiceMonitor and ExternalSecret resources.
+- **Policy expressiveness.** Customer teams can layer API gateways, admission policies, or service meshes without changing the inference image.
 - **Autoscaling.** HPA with custom metrics (DCGM) is available out-of-the-box. ECS has application autoscaling but does not support arbitrary external metrics as cleanly.
-- **Stateful workloads.** StatefulSet + PVC semantics are a clean fit for Qdrant's 3-replica-with-anti-affinity pattern. ECS stateful support is inferior.
+- **Stateful workloads.** StatefulSet + PVC semantics provide a clear single-node Qdrant pilot baseline. Distributed state remains separate work.
 
 ### Negative
 
@@ -61,7 +61,7 @@ Concretely, that means:
 
 - The runbooks assume a moderately experienced platform SRE, not a K8s expert; explicit `kubectl` commands with expected output are included.
 - The `upgrade-model.md` runbook covers vLLM upgrades; a separate but similar pattern handles K8s version upgrades (out of scope for this repo; it is the customer's responsibility).
-- Helm chart defaults favor safe-but-conservative defaults (three replicas, anti-affinity on zones) to compensate for operator unfamiliarity.
+- Helm validation favors fail-closed secret/TLS references and rejects unconfigured multi-replica Qdrant.
 
 ## Alternatives Considered
 
@@ -111,5 +111,5 @@ Decision: serverless is viable for a stateless inference-only workload in a sing
 ## Out-of-scope for this ADR
 
 - Choice of **managed** vs. **self-managed** Kubernetes. We picked managed unconditionally. Self-managed is a valid choice in customers with a mature platform team, but it doubles the support burden on the vendor and is not reflected in this kit.
-- Choice of **service mesh** (Istio / Linkerd / Cilium Service Mesh). The kit currently relies on Traefik + OPA for ingress policy; a service mesh would extend to east-west mTLS. Tracked as a future enhancement.
+- Choice of **service mesh** (Istio / Linkerd / Cilium Service Mesh). The chart has no east-west mTLS or policy mesh; customer requirements decide whether one is needed.
 - Choice of **OpenShift**. OpenShift is Kubernetes with opinions; if the customer requires OpenShift specifically, the delta is ~10% of the chart (SCC vs. PodSecurityPolicy) and can be added as a fourth module or a values override. Not included in v0.1.0.

@@ -13,16 +13,16 @@ This note defines what an enterprise security reviewer, public-sector operator, 
 | Primary reader | Regulated enterprises, AI vendors, platform teams, and security architects. |
 | Core wedge | Terraform/Helm/private deployment kit for LLM workloads that cannot use uncontrolled hosted endpoints. |
 | Stack | Terraform, Helm |
-| Readiness posture | Pilot-ready technical surface; production use requires customer-specific identity, monitoring, data, and support controls. |
+| Readiness posture | Readiness-sprint baseline; not a turnkey, certified, or production-ready platform. |
 
 ## Enterprise Controls
 
 | Control | Current expectation |
 |---|---|
 | Data boundary | Customer documents require approved storage, document-rights checks, redaction policy, and inspectable retrieval/evaluation logs. |
-| Identity and access | Production pilots should add SSO/OIDC, RBAC, scoped service accounts, secret rotation, and admin-visible access reviews. |
-| Auditability | Keep decision logs, generated reports, CI results, eval outputs, and operator handoff artifacts inspectable. |
-| Observability | Track health checks, latency, error budget, cost, eval pass rate, audit-log completeness, and handoff/report generation status. |
+| Identity and access | The chart can require one vLLM API key. Customer identity, tenant authorization, quotas, rate limits, service accounts, and access reviews are separate acceptance work. |
+| Auditability | CI, render, and mapping artifacts show design intent only. Customer runtime logs, immutable retention, request audit, and evidence of operation must be implemented and retained by the customer. |
+| Observability | Collector and scrape configuration are starters. Customer endpoints, redaction, alerts, retention, SLOs, and incident ownership require in-environment evidence. |
 | Release gate | Review gate: README, CI workflow, docs, fixtures, and demo artifacts |
 | Support handoff | Name the owner, escalation path, rollback path, known limits, and review cadence before production testing. |
 
@@ -75,6 +75,10 @@ This note defines what an enterprise security reviewer, public-sector operator, 
 - Templates are not certifications
 - Customer threat model required
 - Secrets/IAM must be customer-specific
+- Qdrant is intentionally single-node; the chart rejects unconfigured multi-replica state.
+- ESO copies values into Kubernetes Secrets; actual etcd encryption, RBAC, rotation, and audit depend on customer controls.
+- API-key auth is not identity, tenant policy, quota, rate limiting, or an authorization gateway.
+- Rendered templates do not prove private routing, backup recovery, high availability, audit completeness, or an SLO.
 
 ## Finish Line
 

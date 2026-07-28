@@ -113,7 +113,6 @@ Rejected as default. Requires customer infrastructure (a proxy registry) that ma
 | vllm/vllm-openai | v0.4.3 | 6 GB | Apache 2.0 |
 | qdrant/qdrant | v1.9.2 | 200 MB | Apache 2.0 |
 | traefik | v3.0.3 | 150 MB | MIT |
-| openpolicyagent/opa | 0.65.0-envoy | 40 MB | Apache 2.0 |
 | otel/opentelemetry-collector-contrib | 0.100.0 | 250 MB | Apache 2.0 |
 | hashicorp/vault | 1.16.2 | 500 MB | BSL 1.1 |
 | external-secrets/external-secrets | v0.9.18 | 80 MB | Apache 2.0 |

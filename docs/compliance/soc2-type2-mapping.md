@@ -55,7 +55,7 @@ It is intended as a starting point for a customer's SOC 2 auditor or the vendor'
 
 | Control | Intent | This kit provides | Evidence artifact |
 |---------|--------|-------------------|-------------------|
-| CC6.1 | Restricts access to information and assets | Private control plane, OPA at gateway, K8s RBAC | Cluster modules, `helm/.../gateway-deployment.yaml` |
+| CC6.1 | Restricts access to information and assets | Private-control-plane options, vLLM API-key baseline, K8s RBAC, and a documented customer identity-gateway gap | Cluster modules, `helm/.../inference-deployment.yaml`, `docs/security-model.md` |
 | CC6.2 | Register and authorize new users | Access via cloud IAM groups only; no local accounts on AKS | `terraform/modules/azure-aks/main.tf` (`local_account_disabled = true`) |
 | CC6.3 | Review user access periodically | Runbook requires quarterly access reviews | `docs/runbooks/rotate-secrets.md` |
 | CC6.6 | Implements logical access security for data transmission | TLS at gateway; mTLS roadmap; private LB only | `helm/.../gateway-service.yaml` |

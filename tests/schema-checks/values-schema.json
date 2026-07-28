@@ -41,6 +41,15 @@
             "quantization": { "type": ["string", "null"], "enum": [null, "awq", "gptq", "fp8"] }
           }
         },
+        "auth": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "existingSecret": { "type": "string" },
+            "key": { "type": "string" }
+          },
+          "required": ["enabled", "existingSecret", "key"]
+        },
         "autoscaling": {
           "type": "object",
           "properties": {
@@ -76,7 +85,7 @@
       "properties": {
         "enabled": { "type": "boolean" },
         "traefik": { "type": "object" },
-        "opa": { "type": "object" },
+        "tls": { "type": "object" },
         "ingress": { "type": "object" }
       },
       "required": ["enabled"]
@@ -109,7 +118,8 @@
       "type": "object",
       "properties": {
         "enabled": { "type": "boolean" },
-        "allowedIngressNamespaces": { "type": "array", "items": { "type": "string" } }
+        "allowedIngressNamespaces": { "type": "array", "items": { "type": "string" } },
+        "allowedIngressCidrs": { "type": "array", "items": { "type": "string" } }
       }
     }
   },

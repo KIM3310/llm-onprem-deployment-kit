@@ -8,70 +8,60 @@ This document turns the repository architecture into a zero-to-low-cost service 
 | --- | --- |
 | Target buyer / user | platform team deploying private LLM workloads into regulated or air-gapped environments |
 | Productized offer | deployment kit for Kubernetes, Helm, Terraform, observability, and security controls |
-| First paid SKU | paid private deployment support, hardened values pack, and upgrade runbook subscription |
+| First paid SKU | fixed-scope Private AI Readiness Sprint for one customer-owned deployment decision |
 | Free lead magnet | free reference architecture and Helm/Terraform starter kit |
-| Paid expansion | implementation sprint, support retainer, and enterprise hardening pack |
+| Paid expansion | controlled pilot or implementation phase only after the readiness decision and production gaps are accepted |
 | Data / workflow moat | multi-cloud deployment recipes, security mappings, upgrade runbooks, and tested Helm/Terraform patterns |
+| Private inquiry | https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry |
 
-## Free-Tier-First Launch Stack
+## Low-Cost Launch Stack
 
 | Concern | Default choice |
 | --- | --- |
 | Build and coding loop | OpenCode, Kimi Code CLI, Freebuff, Lovable, Ollama-assisted local agents |
 | Public front door | Cloudflare Pages first, with Vercel/Netlify as alternate static front doors |
-| Backend / state | Cloudflare Workers for thin APIs, Supabase/Firebase for managed auth and data, Render/Oracle/GCP free VM only when a long-running process is unavoidable |
-| AI inference | OpenRouter, Groq, Cerebras, Cloudflare Workers AI, NVIDIA NIM, Ollama local fallback |
-| Storage / exports | Supabase Storage, Firebase Storage, Cloudflare R2/KV/D1 depending on data shape |
-| Repo-specific launch path | GitHub Pages docs, Cloudflare Pages lead site, GitHub Releases for templates, Oracle/GCP free VM only for demo clusters, paid infra only for customer environments |
+| Lead intake | Central private inquiry form for business contact and scope only |
+| AI inference | Synthetic or customer-approved evaluation in the customer account |
+| Storage / exports | Public repository artifacts for examples; customer storage for all private data and evidence |
+| Repo-specific launch path | GitHub Pages architecture, local validation, then customer-owned infrastructure only after scope approval |
 
-Keep exact provider quotas out of the product contract. Free-tier limits change; the architecture should degrade gracefully through caching, daily quotas, customer-supplied API keys, and an explicit paid workspace switch.
+Do not run a free public GPU service to market this offer. The public surface demonstrates architecture and validation; paid work begins with a bounded decision sprint in or against the customer's environment.
 
 ## System Shape
 
 ```mermaid
 flowchart LR
   Visitor["Visitor or operator"] --> Demo["Free public demo / docs"]
-  Demo --> Capture["Lead capture or anonymous workspace"]
-  Capture --> Workspace["Free-tier workspace state"]
-  Workspace --> Meter["Quota, rate limit, and entitlement checks"]
-  Meter --> Core["Repository core workflow"]
-  Core --> AI["Free or customer-key AI inference"]
-  Core --> Export["Reports, traces, bundles, or templates"]
-  Export --> Upgrade["Paid SKU: private workspace / support / connector / export pack"]
-  Upgrade --> Retention["Saved history, private data, team controls, and recurring reports"]
+  Demo --> Capture["Private scope intake"]
+  Capture --> Score["Use-case readiness scorecard"]
+  Score --> Boundary["Ownership and control boundary"]
+  Boundary --> Plan["Evaluation and deployment adaptation plan"]
+  Plan --> Decision["Go or no-go record"]
+  Decision --> Pilot["Separately scoped controlled pilot"]
 ```
 
-## Metering And Paywall Hooks
+## Commercial Boundary
 
-- Start with anonymous read-only demos and synthetic data so traffic costs stay near zero.
-- Add `workspace_id`, `plan`, `quota_day`, and `export_count` fields before adding payment; this lets the app enforce limits without redesign.
-- Cache AI outputs by normalized prompt, scenario, model, and version. Paid users can bypass cache with their own provider key.
-- Keep exports, private connectors, longer retention, branded reports, team seats, and SLA support behind the paid boundary.
-- Store only the minimum data needed for the free tier. Push private/customer data into local runtime or customer-owned accounts whenever possible.
+- Free: architecture, module/chart source, static validation, and synthetic review material.
+- Paid: one use-case scorecard, responsibility matrix, data/control boundary, customer-specific adaptation plan, cost/capacity risks, evaluation plan, rollback plan, and go or no-go record.
+- Excluded: vendor-hosted customer data, turnkey production deployment, end-user identity, tenant authorization, rate limits, clustered Qdrant, HA/DR evidence, certification, and SLA.
 
 ## 30-Day Revenue Test
 
-1. Publish the public demo or architecture page with one clear CTA: request private workspace, download a pack, or run a sample report.
-2. Add a lead capture route using Workers + D1/KV, Supabase, Firebase, or a GitHub issue form.
-3. Create one downloadable artifact: report PDF, template pack, runbook, dataset sample, or export bundle.
-4. Offer a fixed-scope paid package before building subscription complexity.
-5. Track activation manually first: visits, CTA clicks, export requests, email replies, and paid pilot conversations.
+1. Keep one CTA to the private `private-ai-readiness-sprint` intake.
+2. Qualify one use case, data sensitivity, latency/capacity target, residency constraint, and customer owner.
+3. Run the static baseline and document gaps before any cluster spend.
+4. Produce a fixed-scope readiness decision instead of promising a production deployment.
+5. Track qualified inquiries, scoped sprints, go/no-go decisions, controlled pilots, and implementation conversion.
 
 ## Cost Guardrails
 
-- Prefer static pages, edge functions, and scheduled jobs over always-on servers.
-- Use OpenRouter/Groq/Cerebras/Workers AI free models only for bounded tasks; require customer keys for heavy/private workloads.
-- Use R2 or repo artifacts for large downloads instead of database blobs.
-- Keep synthetic sample data in the public demo and reserve customer data for private/local deployment.
-- Move to paid infrastructure only when one paid SKU repeatedly exceeds free-tier limits.
+- Keep the public surface static and synthetic.
+- Do not provision GPU clusters before the customer accepts a use case, capacity target, budget, and teardown owner.
+- Use customer-owned cloud billing, registries, secrets, storage, models, and logs.
+- Set budget alerts and teardown dates before controlled deployment.
+- Do not build checkout or subscription machinery before the fixed-scope sprint converts.
 
 ## Paid Conversion Architecture
 
-The paid version should not be a different product. It should unlock more trust, privacy, retention, and operational surface area:
-
-- private workspace or local deployment
-- saved history and longer retention
-- branded exports or signed evidence bundles
-- connector setup for the customer's systems
-- team roles, audit logs, and admin controls
-- support or implementation package tied to a concrete outcome
+The paid sprint is a decision product. A controlled pilot, implementation, or support retainer is sold separately only when the scorecard and gap register justify it.

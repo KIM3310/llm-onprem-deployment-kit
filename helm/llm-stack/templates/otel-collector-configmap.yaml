@@ -7,6 +7,9 @@ metadata:
     {{- include "llm-stack.componentLabels" (dict "component" "otel-collector" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 4 }}
 data:
   collector-config.yaml: |
+    extensions:
+      health_check:
+        endpoint: 0.0.0.0:13133
     receivers:
       otlp:
         protocols:
@@ -55,6 +58,7 @@ data:
         tls:
           insecure: {{ .Values.observability.otelCollector.exporters.otlp.insecure }}
     service:
+      extensions: [health_check]
       pipelines:
         traces:
           receivers: [otlp]
@@ -107,10 +111,12 @@ spec:
               containerPort: 4318
             - name: metrics
               containerPort: 8888
+            - name: health
+              containerPort: 13133
           livenessProbe:
             httpGet:
               path: /
-              port: 13133
+              port: health
             initialDelaySeconds: 15
             periodSeconds: 30
           resources:

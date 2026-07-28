@@ -22,6 +22,8 @@ inference:
     enabled: false
   pdb:
     enabled: false
+  auth:
+    enabled: false
 
 vectorDb:
   replicaCount: 1
@@ -41,6 +43,8 @@ gateway:
     service:
       type: ClusterIP
   ingress:
+    enabled: false
+  tls:
     enabled: false
 
 observability:

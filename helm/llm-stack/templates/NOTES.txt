@@ -14,12 +14,12 @@ Next steps
 
 2. Port-forward the gateway for a quick local smoke test:
 
-   kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "llm-stack.fullname" . }}-gateway 8443:{{ .Values.gateway.traefik.service.port }}
+   kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "llm-stack.fullname" . }}-gateway 8443:{{ .Values.gateway.traefik.service.httpsPort }}
 
 3. Issue an inference request against the OpenAI-compatible endpoint:
 
    curl -k https://localhost:8443/v1/chat/completions \
-     -H 'Authorization: Bearer <your-token>' \
+     -H 'Authorization: Bearer <customer-owned-api-key>' \
      -H 'Content-Type: application/json' \
      -d '{"model":"{{ .Values.inference.model.name }}","messages":[{"role":"user","content":"hello"}]}'
 
@@ -45,3 +45,8 @@ Next steps
 {{- end }}
 
 For incident response, consult docs/runbooks/incident-response.md.
+
+This chart is a customer-owned pilot baseline. It does not provide end-user
+identity, tenant authorization, quotas, rate limiting, clustered Qdrant,
+production evidence, or an SLA. Validate those controls in the customer
+environment before opening traffic.

@@ -1,56 +1,43 @@
 # Service Architecture - llm-onprem-deployment-kit
 
-This document keeps the public architecture plan focused on deployment boundaries, operational readiness, and resource ownership.
+This is the supported boundary for a `private-ai-readiness-sprint`. The repository is a customer-owned pilot baseline, not a vendor-hosted control plane.
 
-## Technical Role
+## Ownership Boundary
 
-- **Lane:** Repository-specific proof surface and implementation reference
-- **Primary reader:** Operators, maintainers, and partners
-- **First motion:** Validate the runtime walkthrough, README, architecture notes, and local checks before expanding the runtime surface.
+```text
+Public architecture and private scope intake
+  -> customer cloud account and network
+  -> customer identity / API gateway / quotas / rate limits
+  -> internal load balancer
+  -> Traefik TLS and reverse proxy
+  -> API-key-protected vLLM
+  -> optional single-node Qdrant
+  -> customer metrics, logs, backup, and incident systems
+```
 
-## Recommended Architecture
+| Resource | Owner | Repository contribution |
+|---|---|---|
+| Cloud account, billing, IAM, network | Customer | Terraform module starters and review checklist |
+| Cluster, registry, KMS, secret manager | Customer | Helm references and optional ESO resources |
+| Identity, tenant policy, quotas, rate limits | Customer | Explicit exclusion and integration requirement |
+| Prompts, model weights, vector data | Customer | No vendor-hosted data path |
+| Logs, audit, retention, alerts, incident evidence | Customer | Collector/scrape configuration starter and runbooks |
+| Vendor access | Customer-approved | Time-bounded, least-privilege, recorded, and revocable |
 
-~~~text
-User or operator
-  -> public proof surface
-  -> scoped app/API layer only when state or integrations are required
-  -> managed data, object storage, queue, and observability after ownership is clear
-  -> signed report, demo, export, or operating handoff
-~~~
+## Current Helm Contract
 
-## Resource Plan
+- Traefik has a tested file-provider route to vLLM.
+- vLLM requires a customer-owned API-key secret outside the dev override.
+- The default chart fails when required secret references or TLS configuration are missing.
+- Qdrant is fixed at one replica because distributed consensus is not configured.
+- OPA, OIDC/SAML, tenant policy, quotas, rate limits, and east-west mTLS are not included.
+- NetworkPolicy is off in the baseline and enabled by the air-gap overlay only with approved ingress sources.
+- ESO is optional and assumes a customer-created `SecretStore` or `ClusterSecretStore`.
 
-| Resource | Use | Enable timing |
-| --- | --- | --- |
-| Static hosting | Public, cacheable proof surface and documentation. | Keep as the default until server-side state is required. |
-| App/API runtime | Small API runtime for authenticated workflows, integrations, or server-side jobs. | Enable after the workflow requires state or external calls. |
-| Data layer | Relational state, audit history, roles, or workflow records. | Enable after retention and deletion rules are defined. |
-| Object storage | Uploads, reports, screenshots, model artifacts, or signed exports. | Enable only when persistent artifacts are required. |
-| Queue/cache | Async jobs, retries, scheduled checks, and rate-limited workflows. | Enable when reliability needs exceed direct request handling. |
-| Observability | Error tracking, performance traces, and privacy-safe usage signals. | Enable before external users test the workflow. |
+## Evidence Boundary
 
-## Repo-Specific Resources
+Terraform validation, Helm render/schema checks, ShellCheck, and repository tests prove static contracts. They do not prove actual provider routing, GPU availability, encryption, secret rotation, model licensing, identity, backup recovery, audit completeness, high availability, latency, capacity, cost, or an SLO. Those are customer-environment acceptance items.
 
-- Public demo or static proof route
-- CI or local quality gate
-- Architecture blueprint validation
-- Secret manager for any future credentials
-- Privacy-safe telemetry only when needed
+## Promotion Beyond Readiness
 
-## Information Needed From Account Owner
-
-- Hosting account and deployment target
-- Domain or DNS access when a custom domain is required
-- Runtime secret names and ownership
-- Data retention and deletion policy
-- Observability project and alert routing
-
-## Production Readiness Checklist
-
-- Public demo route or README proof link is current.
-- Service boundary states what the system does and does not do.
-- Data storage, retention, and deletion path are defined before private data is accepted.
-- Secrets are stored in platform secret managers, never committed to the repo.
-- Usage alerts or manual approval gates are enabled before external testing.
-- Logs and analytics avoid private payloads.
-- Rollback or disable path exists for every external integration.
+The sprint ends with a go or no-go decision and production gap list. A production implementation is a separately scoped phase that must close identity, authorization, quota/rate limiting, clustered state or removal of Qdrant, backup/restore, immutable audit, observability, incident response, vulnerability management, capacity, cost, and support ownership.

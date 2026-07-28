@@ -1,15 +1,15 @@
-# ADR 005 - Secrets Management (External Secrets Operator + HashiCorp Vault)
+# ADR 005 - Secrets Management Boundary
 
 ## Status
 
-Accepted.
+Amended.
 
 ## Context
 
 Production LLM deployments have two classes of secrets:
 
-1. **Platform secrets.** Registry pull tokens, TLS certificates, OPA bundle signing keys, Vault unseal keys. Managed by the platform team; cadence: quarterly or on incident.
-2. **Application secrets.** JWT signing keys for the gateway, model registry API keys, Qdrant API keys (if enabled), observability endpoint tokens. Managed by the app team; cadence: monthly or on rotation.
+1. **Platform secrets.** Registry pull tokens, TLS certificates, secret-store credentials, and any KMS/Vault recovery material.
+2. **Application secrets.** The vLLM inference API key and any customer application or observability credentials added later.
 
 Requirements:
 
@@ -30,12 +30,13 @@ Candidate patterns:
 
 ## Decision
 
-We adopt **ESO + HashiCorp Vault (A1)** as the default secrets management stack.
+The baseline references an existing Kubernetes Secret and keeps ESO disabled. For customer pilots, ESO may read from an approved `SecretStore` or `ClusterSecretStore`, including Vault or a cloud-native manager.
 
-- The chart renders `ExternalSecret` resources for each secret the application consumes.
-- `ClusterSecretStore` is expected to be pre-created by the operator, pointed at the customer's Vault, with Kubernetes auth (per-namespace `role`).
-- Vault is assumed to be customer-deployed and operated; the chart does not install Vault.
-- Vault's storage backend is sealed by the cloud KMS (`auto-unseal`), which is provisioned by the Terraform modules.
+- The inference Deployment consumes `llm-stack-inference-api-key` by default.
+- The air-gap overlay enables one `ExternalSecret` for that key.
+- The operator must pre-create and validate the referenced store.
+- The chart does not install Vault, a cloud secret manager, ESO, or a store resource.
+- ESO creates a native Kubernetes Secret; customer etcd encryption, RBAC, rotation, and audit controls remain material.
 
 The values file's `externalSecrets.secrets[]` array enumerates each secret by name and mapping. Adding a new secret is a values edit + git PR.
 
@@ -43,24 +44,22 @@ The values file's `externalSecrets.secrets[]` array enumerates each secret by na
 
 ### Positive
 
-- **Single source of truth.** All secrets live in Vault. One place to audit, rotate, and revoke.
-- **Portable.** Vault + ESO work identically on AKS, EKS, and GKE. Cloud-native secret stores differ materially; abstracting over them via Vault keeps our Helm chart cloud-agnostic.
+- **Customer choice.** The chart does not force a vendor-owned store or custody model.
+- **Portable reference.** Workloads consume a Kubernetes Secret regardless of which approved store or synchronization method creates it.
 - **Rotatable.** Updating a value in Vault triggers ESO reconciliation within the `refreshInterval` (default 1h); a Deployment restart picks it up.
-- **Auditable.** Vault's audit log captures every secret read with caller identity.
-- **Compliant.** Maps cleanly to SOC 2 CC6.1 and ISO 27001 A.5.17.
-- **Operator-familiar.** Vault is broadly deployed in enterprise infra; our approach reuses something they already know.
+- **Auditable when integrated.** The customer store, ESO, Kubernetes audit, and access-review configuration determine evidence quality.
 
 ### Negative
 
-- **Customer dependency.** Customers without Vault must deploy it. We do not ship a Vault helm chart here, because Vault's DR story is customer-specific and we do not want to take on operational responsibility for a critical piece of infra we don't own.
-- **Two moving parts.** ESO + Vault. Each can fail independently. Mitigation: incident runbook has explicit sections for ESO-error and Vault-unreachable scenarios.
+- **Customer dependency.** Protected pilots need an approved secret manager, ownership, rotation, recovery, and break-glass path.
+- **Optional moving parts.** When ESO is used, both ESO and its store can fail independently.
 - **Secret visibility.** ESO produces a Kubernetes Secret; anyone with `secrets.get` in the namespace can read it. Addressed by least-privilege RBAC.
 - **Refresh latency.** Default 1h; accept this for most workloads, or force sync via annotation for urgent rotations.
 
 ### Mitigations
 
-- Vault's bootstrap and DR are the customer's responsibility; runbooks reference the customer's Vault DR plan rather than defining one.
-- K8s RBAC for Secrets is locked down by default in the `llm-stack` namespace (not addressed in this chart directly, but recommended via admission controllers).
+- Secret-store bootstrap and DR are customer responsibilities.
+- Kubernetes Secret RBAC is not created by this chart and must be reviewed.
 - ESO status is monitored via Prometheus metrics; the incident response runbook includes the canonical alert on `externalsecret_sync_calls_error_total`.
 
 ## Alternatives Considered
@@ -73,7 +72,7 @@ Simpler in a single-cloud deployment; no Vault needed. Rejected as default becau
 - Cloud-native stores differ in their audit logging granularity and IAM model; we'd have to document three different patterns.
 - Vault gives us a clean abstraction that survives customer cloud swaps.
 
-**When to prefer:** single-cloud customer, small team, no existing Vault. To switch: swap `ClusterSecretStore` provider to Key Vault / Secrets Manager / Google Secret Manager; no chart changes needed.
+**When to prefer:** single-cloud customer, small team, no existing Vault. Supply the provider-specific store and remote key mapping in customer values.
 
 ### A3 - Vault Agent Injector sidecar
 

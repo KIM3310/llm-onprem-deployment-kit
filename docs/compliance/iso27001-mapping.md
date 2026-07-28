@@ -37,7 +37,7 @@ The mapping is scoped to controls that a software deployment kit can meaningfull
 | Control | Title | This kit provides | Evidence artifact |
 |---------|-------|-------------------|-------------------|
 | A.8.2 | Privileged access rights | No cluster admins by default; bootstrap-only admin entry | EKS access entry config |
-| A.8.3 | Information access restriction | OPA at gateway; NetworkPolicy default-deny | `helm/.../opa-sidecar-configmap.yaml`, `helm/.../networkpolicy.yaml` |
+| A.8.3 | Information access restriction | vLLM API-key baseline and optional NetworkPolicy; customer identity/authorization gateway required | `helm/.../inference-deployment.yaml`, `helm/.../networkpolicy.yaml` |
 | A.8.4 | Access to source code | CI gates `terraform validate`, `helm lint`, `shellcheck` | CI workflows |
 | A.8.5 | Secure authentication | OIDC / SAML at gateway; cloud IAM for cluster | `helm/.../gateway-deployment.yaml` |
 
@@ -56,8 +56,8 @@ The mapping is scoped to controls that a software deployment kit can meaningfull
 | A.8.10 | Information deletion | Soft-delete windows on keys and secrets | Cluster modules |
 | A.8.12 | Data leakage prevention | Request content not logged; OTel metadata-only | `helm/.../values.yaml` (`--disable-log-requests`), security-model doc |
 | A.8.13 | Information backup | Qdrant backup runbook + cloud volume snapshots | `docs/runbooks/disaster-recovery.md` |
-| A.8.14 | Redundancy of information processing facilities | Multi-AZ node pools; HPA+PDB; 3-replica Qdrant | Cluster modules, chart templates |
-| A.8.15 | Logging | Control plane + OTel + OPA decisions | Cluster modules, OTel config |
+| A.8.14 | Redundancy of information processing facilities | Multi-zone/HPA/PDB options; Qdrant is single-node and excluded from an HA claim | Cluster modules, chart templates |
+| A.8.15 | Logging | Control-plane and OTel configuration starters; customer request audit and retention required | Cluster modules, OTel config |
 | A.8.16 | Monitoring activities | ServiceMonitors + alert rules referenced in DR runbook | `helm/.../servicemonitor.yaml` |
 | A.8.17 | Clock synchronization | NTP via node pool defaults (cloud-managed) | Cluster modules |
 
@@ -73,7 +73,7 @@ The mapping is scoped to controls that a software deployment kit can meaningfull
 
 | Control | Title | This kit provides | Evidence artifact |
 |---------|-------|-------------------|-------------------|
-| A.8.26 | Application security requirements | OPA policy bundle + chart defaults to secure values | `helm/.../opa-sidecar-configmap.yaml` |
+| A.8.26 | Application security requirements | Fail-closed secret references and explicit customer policy-gateway gap | `helm/.../000-validate.yaml`, `docs/security-model.md` |
 | A.8.28 | Secure coding | ShellCheck CI on scripts; Terraform fmt/validate; Helm lint | `.github/workflows/*.yml` |
 | A.8.29 | Security testing in development and acceptance | Smoke test + schema validation in CI | `scripts/smoke-test.sh`, `.github/workflows/helm-lint.yml` |
 | A.8.32 | Change management | PR-based change with CI gates | CI workflows |

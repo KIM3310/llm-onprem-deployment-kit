@@ -55,6 +55,9 @@ spec:
           args:
             - "--host=0.0.0.0"
             - "--port=8000"
+            {{- if .Values.inference.auth.enabled }}
+            - "--api-key=$(VLLM_API_KEY)"
+            {{- end }}
             {{- if .Values.inference.model.modelPath }}
             - "--model={{ .Values.inference.model.modelPath }}"
             {{- else }}
@@ -68,6 +71,13 @@ spec:
             - {{ . | quote }}
             {{- end }}
           env:
+            {{- if .Values.inference.auth.enabled }}
+            - name: VLLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "inference.auth.existingSecret is required when inference.auth.enabled=true" .Values.inference.auth.existingSecret }}
+                  key: {{ required "inference.auth.key is required when inference.auth.enabled=true" .Values.inference.auth.key }}
+            {{- end }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:

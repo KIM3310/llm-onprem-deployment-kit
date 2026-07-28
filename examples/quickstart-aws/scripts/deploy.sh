@@ -28,53 +28,32 @@ gpu_node_count      = 1
 standard_node_count = 3
 EOF
 
-echo "[1/6] terraform init"
+echo "[1/5] terraform init"
 terraform init -input=false
 
-echo "[2/6] terraform apply"
+echo "[2/5] terraform apply"
 terraform apply -auto-approve
 
-echo "[3/6] aws eks update-kubeconfig"
+echo "[3/5] aws eks update-kubeconfig"
 aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$REGION"
 
 kubectl wait --for=condition=Ready nodes --all --timeout=15m
 
-echo "[4/6] Install External Secrets Operator"
-if ! helm status external-secrets -n external-secrets >/dev/null 2>&1; then
-    helm repo add external-secrets https://charts.external-secrets.io
-    helm repo update
-    helm install external-secrets external-secrets/external-secrets \
-        --namespace external-secrets --create-namespace \
-        --set installCRDs=true \
-        --wait
-fi
-
-echo "[5/6] Seed Secrets Manager"
+echo "[4/5] Create evaluation API-key Secret"
 INFERENCE_API_KEY="$(openssl rand -hex 32)"
-aws secretsmanager create-secret \
-    --name llm-stack/inference-api-key \
-    --secret-string "$INFERENCE_API_KEY" \
-    --region "$REGION" >/dev/null 2>&1 || \
-    aws secretsmanager update-secret \
-        --secret-id llm-stack/inference-api-key \
-        --secret-string "$INFERENCE_API_KEY" \
-        --region "$REGION" >/dev/null
-
-aws secretsmanager create-secret \
-    --name llm-stack/vector-db-password \
-    --secret-string "$(openssl rand -hex 16)" \
-    --region "$REGION" >/dev/null 2>&1 || true
-
-IRSA_ROLE_ARN="$(terraform output -raw external_secrets_role_arn 2>/dev/null || echo "")"
+kubectl create namespace llm-stack --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n llm-stack create secret generic llm-stack-inference-api-key \
+    --from-literal="api-key=$INFERENCE_API_KEY" \
+    --dry-run=client -o yaml | kubectl apply -f -
 
 cd "$REPO_ROOT/helm/llm-stack"
 
-echo "[6/6] helm install llm-stack"
+echo "[5/5] helm install evaluation stack"
 helm install llm-stack . \
-    --namespace llm-stack --create-namespace \
+    --namespace llm-stack \
     --values values.yaml \
-    --set "externalSecrets.awsSecretsManager.region=$REGION" \
-    --set "externalSecrets.awsSecretsManager.irsaRoleArn=$IRSA_ROLE_ARN" \
+    --set "gateway.tls.enabled=false" \
+    --set "gateway.traefik.service.type=ClusterIP" \
     --wait --timeout 20m
 
 echo ""
@@ -82,7 +61,5 @@ echo "==============================================="
 echo "  Deploy complete"
 echo "==============================================="
 echo ""
-echo "Inference API key (save this):"
-echo "  $INFERENCE_API_KEY"
-echo ""
-echo "Next: port-forward, test, smoke-test per quickstart README"
+echo "The evaluation API key is stored in the llm-stack-inference-api-key Secret."
+echo "Do not print it into shared logs. Run the smoke test, then rotate or delete it at teardown."

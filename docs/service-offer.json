@@ -5,9 +5,9 @@
   "repository_url": "https://github.com/KIM3310/llm-onprem-deployment-kit",
   "architecture_url": "https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/system-architecture.md",
   "revenue_architecture_url": "https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/revenue-architecture.md",
-  "lead_capture_url": "https://github.com/KIM3310/llm-onprem-deployment-kit/issues/new?template=service-inquiry.yml&title=Private+workspace+inquiry%3A+LLM+On-Prem+Deployment+Kit",
+  "lead_capture_url": "https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry",
   "productized_offer": "deployment kit for Kubernetes, Helm, Terraform, observability, and security controls",
-  "first_paid_sku": "paid private deployment support, hardened values pack, and upgrade runbook subscription",
+  "first_paid_sku": "fixed-scope Private AI Readiness Sprint for one customer-owned deployment decision",
   "free_lead_magnet": "free reference architecture and Helm/Terraform starter kit",
   "search_positioning": {
     "primary_query": "LLM On-Prem Deployment Kit Kubernetes Helm Terraform",
@@ -17,11 +17,11 @@
       "LLM On-Prem Deployment Kit developer tool",
       "deployment kit for Kubernetes, Helm, Terraform, observability, and security controls service"
     ],
-    "audience_intent": "Find a runnable demo, inspect the system architecture, and decide whether a private workspace or implementation package is useful."
+    "audience_intent": "Inspect the deployment baseline and decide whether one customer-owned private AI use case should proceed to a controlled pilot."
   },
   "monetization_boundary": {
     "free": "free reference architecture and Helm/Terraform starter kit",
-    "paid": "paid private deployment support, hardened values pack, and upgrade runbook subscription",
+    "paid": "customer-owned readiness sprint with boundary mapping, deployment adaptation, evaluation plan, and go or no-go evidence",
     "metering_hooks": [
       "workspace_id",
       "plan",
@@ -45,7 +45,7 @@
     "operatingSystem": "Web, serverless, and local development environments",
     "url": "https://kim3310.github.io/llm-onprem-deployment-kit/",
     "codeRepository": "https://github.com/KIM3310/llm-onprem-deployment-kit",
-    "description": "LLM On-Prem Deployment Kit: deployment kit for Kubernetes, Helm, Terraform, observability, and security controls. Free entry point: free reference architecture and Helm/Terraform starter kit. Paid path: paid private.",
+    "description": "Customer-owned private AI readiness baseline for Kubernetes, Helm, Terraform, secrets, observability, and explicit production-gap review.",
     "creator": {
       "@type": "Person",
       "name": "KIM3310",
@@ -62,30 +62,59 @@
       },
       {
         "@type": "Offer",
-        "name": "paid private deployment support, hardened values pack, and upgrade runbook subscription",
+        "name": "fixed-scope Private AI Readiness Sprint",
         "availability": "https://schema.org/LimitedAvailability",
-        "url": "https://github.com/KIM3310/llm-onprem-deployment-kit/blob/main/docs/revenue-architecture.md"
+        "url": "https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry"
       }
     ],
     "isAccessibleForFree": true,
     "keywords": "llm-onprem-deployment-kit, LLM, On-Prem, Deployment, Kit, deployment, kit, Kubernetes, Helm, Terraform, observability, security, controls, support, hardened, values, pack, upgrade, runbook, subscription, reference, architecture"
   },
+  "delivery_boundary": {
+    "runtime_owner": "customer",
+    "control_plane": "customer cloud account, cluster, registry, KMS, secrets, and logs",
+    "vendor_access": "time-bounded and customer-approved when required",
+    "data_path": "no vendor-hosted prompts, model weights, vector data, or runtime telemetry"
+  },
+  "pilot_deliverables": [
+    "one use-case readiness scorecard and measurable evaluation target",
+    "customer and vendor responsibility matrix",
+    "data, model, identity, network, secret, and logging boundary map",
+    "customer-specific Terraform and Helm adaptation plan",
+    "capacity, cost, dependency, and operational risk register",
+    "evaluation and rollback plan with go or no-go decision record",
+    "production gap list covering identity, rate limits, HA, DR, audit, and support"
+  ],
+  "acceptance_gates": [
+    "customer account and data ownership are agreed before deployment work",
+    "API-key baseline is not represented as end-user identity or tenant authorization",
+    "clustered vector state is excluded until consensus, backup, and restore are designed",
+    "network, secret, encryption, observability, and recovery controls are evidenced in the customer environment",
+    "a named customer owner approves any time-bounded vendor access"
+  ],
+  "production_exclusions": [
+    "no turnkey or certified production deployment",
+    "no vendor-owned cloud account or hosted customer data path",
+    "no bundled end-user identity, tenant authorization, quotas, or rate limiting",
+    "no clustered Qdrant, high-availability, disaster-recovery, or SLO proof",
+    "no compliance certification, legal assurance, production SLA, or unattended rollout"
+  ],
   "commerce": {
     "gateway_url": "https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers",
-    "lane_id": "aix-governance-sprint",
-    "lane_name": "AIX Governance Sprint",
+    "lane_id": "private-ai-readiness-sprint",
+    "lane_name": "Private AI Readiness Sprint",
     "billing_mode": "quote",
-    "price_unit": "governance sprint or deployment pack",
-    "fulfillment_kind": "private workshop, controls evidence, and deployment adaptation",
+    "price_unit": "typical discovery scope from USD 2,500",
+    "fulfillment_kind": "use-case scorecard, data and policy boundaries, evaluation plan, deployment options, and go or no-go roadmap",
     "risk_bucket": "high-trust-b2b",
     "checkout": {
-      "provider": "lemon-squeezy",
-      "status": "account-onboarding-required",
-      "fallback_url": "https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit#service-offers"
+      "provider": null,
+      "status": "not-configured",
+      "fallback_url": "https://kim3310-doeon-kim-portfolio.pages.dev/?offer=llm-onprem-deployment-kit&inquiry=private-ai-readiness-sprint#private-inquiry"
     },
     "sponsorship": {
       "provider": "github-sponsors",
-      "eligible": true,
+      "eligible": false,
       "status": "sponsors-listing-not-configured"
     },
     "advertising": {

@@ -20,7 +20,7 @@ spec:
       labels:
         {{- include "llm-stack.componentLabels" (dict "component" "gateway" "Values" .Values "Chart" .Chart "Release" .Release) | nindent 8 }}
       annotations:
-        checksum/opa-policy: {{ .Values.gateway.opa.policy | sha256sum }}
+        checksum/dynamic-config: {{ include (print $.Template.BasePath "/gateway-dynamic-configmap.yaml") . | sha256sum }}
         prometheus.io/scrape: "true"
         prometheus.io/port: "9100"
         prometheus.io/path: "/metrics"
@@ -38,10 +38,13 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           args:
             - "--api.dashboard=false"
-            - "--providers.kubernetesingress"
+            - "--providers.file.filename=/etc/traefik/dynamic/dynamic.yaml"
+            - "--providers.file.watch=true"
             - "--entrypoints.web.address=:8080"
             - "--entrypoints.websecure.address=:8443"
             - "--entrypoints.metrics.address=:9100"
+            - "--ping=true"
+            - "--ping.entrypoint=web"
             - "--metrics.prometheus=true"
             - "--metrics.prometheus.entrypoint=metrics"
             - "--accesslog=true"
@@ -73,49 +76,25 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
-        {{- if .Values.gateway.opa.enabled }}
-        - name: opa
-          image: {{ include "llm-stack.image" (dict "image" .Values.gateway.opa.image "global" .Values.global) }}
-          imagePullPolicy: {{ .Values.gateway.opa.image.pullPolicy | default .Values.global.imagePullPolicy }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          args:
-            - "run"
-            - "--server"
-            - "--addr=0.0.0.0:8181"
-            - "--diagnostic-addr=0.0.0.0:8282"
-            - "--log-level=info"
-            - "/policies/authz.rego"
-          ports:
-            - name: opa
-              containerPort: 8181
-            - name: opa-diag
-              containerPort: 8282
-          livenessProbe:
-            httpGet:
-              path: /health?plugins&bundles
-              port: opa-diag
-            initialDelaySeconds: 10
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /health?plugins&bundles
-              port: opa-diag
-            initialDelaySeconds: 5
-            periodSeconds: 5
-          resources:
-            {{- toYaml .Values.gateway.opa.resources | nindent 12 }}
-          volumeMounts:
-            - name: opa-policy
-              mountPath: /policies
+            - name: dynamic-config
+              mountPath: /etc/traefik/dynamic
               readOnly: true
-        {{- end }}
+            {{- if .Values.gateway.tls.enabled }}
+            - name: tls
+              mountPath: /etc/traefik/tls
+              readOnly: true
+            {{- end }}
       volumes:
         - name: tmp
-          emptyDir: {}
-        {{- if .Values.gateway.opa.enabled }}
-        - name: opa-policy
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi
+        - name: dynamic-config
           configMap:
-            name: {{ include "llm-stack.fullname" . }}-opa-policy
+            name: {{ include "llm-stack.fullname" . }}-gateway-dynamic
+        {{- if .Values.gateway.tls.enabled }}
+        - name: tls
+          secret:
+            secretName: {{ .Values.gateway.tls.secretName }}
         {{- end }}
 {{- end }}
