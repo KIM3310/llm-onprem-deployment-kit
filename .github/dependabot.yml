@@ -44,6 +44,11 @@ updates:
         patterns:
           - "*"
     ignore:
+      # AzureRM 4.x/5.x requires an explicit module migration; automated
+      # requirement-only bumps currently fail validation across four roots.
+      - dependency-name: "hashicorp/azurerm"
+        versions:
+          - ">= 4.0.0"
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
