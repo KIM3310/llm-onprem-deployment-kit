@@ -18,11 +18,11 @@ terraform {
     }
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.50"
+      version = "~> 6.58"
     }
     google = {
       source  = "hashicorp/google"
-      version = "~> 5.35"
+      version = "~> 7.43"
     }
     google-beta = {
       source  = "hashicorp/google-beta"
