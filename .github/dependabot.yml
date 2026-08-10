@@ -19,8 +19,19 @@ updates:
     commit-message:
       prefix: "deps"
       include: "scope"
+  # Keep shared provider constraints aligned across root examples, modules, and
+  # module examples. Updating these directories independently creates an
+  # unsatisfiable combination while a pull request is under validation.
   - package-ecosystem: "terraform"
-    directory: "/terraform/examples/airgapped-enterprise"
+    directories:
+      - "/terraform/examples/airgapped-enterprise"
+      - "/terraform/examples/dev-sandbox"
+      - "/terraform/modules/aws-eks"
+      - "/terraform/modules/aws-eks/examples/basic"
+      - "/terraform/modules/azure-aks"
+      - "/terraform/modules/azure-aks/examples/basic"
+      - "/terraform/modules/gcp-gke"
+      - "/terraform/modules/gcp-gke/examples/basic"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -29,139 +40,7 @@ updates:
     open-pull-requests-limit: 5
     groups:
       terraform-dependencies:
-        patterns:
-          - "*"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
-    commit-message:
-      prefix: "deps"
-      include: "scope"
-  - package-ecosystem: "terraform"
-    directory: "/terraform/examples/dev-sandbox"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Seoul"
-    open-pull-requests-limit: 5
-    groups:
-      terraform-dependencies:
-        patterns:
-          - "*"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
-    commit-message:
-      prefix: "deps"
-      include: "scope"
-  - package-ecosystem: "terraform"
-    directory: "/terraform/modules/aws-eks"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Seoul"
-    open-pull-requests-limit: 5
-    groups:
-      terraform-dependencies:
-        patterns:
-          - "*"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
-    commit-message:
-      prefix: "deps"
-      include: "scope"
-  - package-ecosystem: "terraform"
-    directory: "/terraform/modules/aws-eks/examples/basic"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Seoul"
-    open-pull-requests-limit: 5
-    groups:
-      terraform-dependencies:
-        patterns:
-          - "*"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
-    commit-message:
-      prefix: "deps"
-      include: "scope"
-  - package-ecosystem: "terraform"
-    directory: "/terraform/modules/azure-aks"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Seoul"
-    open-pull-requests-limit: 5
-    groups:
-      terraform-dependencies:
-        patterns:
-          - "*"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
-    commit-message:
-      prefix: "deps"
-      include: "scope"
-  - package-ecosystem: "terraform"
-    directory: "/terraform/modules/azure-aks/examples/basic"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Seoul"
-    open-pull-requests-limit: 5
-    groups:
-      terraform-dependencies:
-        patterns:
-          - "*"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
-    commit-message:
-      prefix: "deps"
-      include: "scope"
-  - package-ecosystem: "terraform"
-    directory: "/terraform/modules/gcp-gke"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Seoul"
-    open-pull-requests-limit: 5
-    groups:
-      terraform-dependencies:
-        patterns:
-          - "*"
-    ignore:
-      - dependency-name: "*"
-        update-types:
-          - "version-update:semver-major"
-    commit-message:
-      prefix: "deps"
-      include: "scope"
-  - package-ecosystem: "terraform"
-    directory: "/terraform/modules/gcp-gke/examples/basic"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Seoul"
-    open-pull-requests-limit: 5
-    groups:
-      terraform-dependencies:
+        group-by: dependency-name
         patterns:
           - "*"
     ignore:
