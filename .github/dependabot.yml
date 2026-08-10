@@ -4,8 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      day: "wednesday"
+      time: "09:30"
       timezone: "Asia/Seoul"
     open-pull-requests-limit: 5
     groups:
@@ -34,8 +34,8 @@ updates:
       - "/terraform/modules/gcp-gke/examples/basic"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      day: "thursday"
+      time: "09:30"
       timezone: "Asia/Seoul"
     open-pull-requests-limit: 5
     groups:

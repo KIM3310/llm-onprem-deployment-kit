@@ -28,9 +28,13 @@ jobs:
 
       - name: Setup kubeconform (kubeval successor)
         run: |
-          curl -L -o /tmp/kubeconform.tar.gz \
+          set -euo pipefail
+          archive="/tmp/kubeconform.tar.gz"
+          expected_sha256="2b4ebeaa4d5ac4843cf8f7b7e66a8874252b6b71bc7cbfc4ef1cbf85acec7c07"
+          curl -sSfL -o "${archive}" \
             https://github.com/yannh/kubeconform/releases/download/v0.6.4/kubeconform-linux-amd64.tar.gz
-          tar -xzf /tmp/kubeconform.tar.gz -C /tmp
+          printf '%s  %s\n' "${expected_sha256}" "${archive}" | sha256sum -c -
+          tar -xzf "${archive}" -C /tmp
           sudo mv /tmp/kubeconform /usr/local/bin/kubeconform
           kubeconform -v
 
