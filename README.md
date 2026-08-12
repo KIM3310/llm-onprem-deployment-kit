@@ -2,7 +2,7 @@
 
 ## Live Demo
 
-- [Open the public GitHub Pages demo](https://llm-onprem-deployment-kit.pages.dev/)
+- [Open the public Cloudflare Pages demo](https://llm-onprem-deployment-kit.pages.dev/)
 - Scope: credential-free, synthetic-data demo for deployment reviewers and evaluators.
 
 > A customer-owned deployment baseline for evaluating private, hybrid, or air-gapped LLM infrastructure. It is designed for a bounded readiness sprint and must be adapted and validated before production use.
@@ -24,7 +24,6 @@ A private/hybrid LLM deployment kit for organizations that cannot send sensitive
 | Area | Details |
 |---|---|
 | Users | Regulated enterprises, internal AI platform teams, security architects, and infrastructure operators. |
-| Technical path | Validate the demo, README, architecture notes, and quality gate before deeper workflow review. |
 | System scope | Terraform, Helm, air-gapped notes, compliance runbooks, model-routing boundaries, and infrastructure controls. |
 | Operating boundary | Customer owns the cloud account, cluster, registry, KMS, secrets, data, and logs. The chart supplies API-key protection and a reverse-proxy path, not end-user identity, tenant authorization, rate limiting, clustered vector state, or production evidence. |
 | Evaluation path | Inspect the infra modules, run validation commands where available, and review the operating notes. |
