@@ -23,7 +23,12 @@ CF_PAGES_PROJECT ?= llm-onprem-deployment-kit
 
 REPO_ROOT        := $(shell pwd)
 TF_MODULE_DIRS   := terraform/modules/azure-aks terraform/modules/aws-eks terraform/modules/gcp-gke
-TF_EXAMPLE_DIRS  := terraform/examples/airgapped-enterprise terraform/examples/dev-sandbox
+TF_EXAMPLE_DIRS  := \
+	terraform/modules/azure-aks/examples/basic \
+	terraform/modules/aws-eks/examples/basic \
+	terraform/modules/gcp-gke/examples/basic \
+	terraform/examples/airgapped-enterprise \
+	terraform/examples/dev-sandbox
 HELM_CHART_DIR   := helm/llm-stack
 NAMESPACE        ?= llm-stack
 RELEASE          ?= llm-stack
@@ -100,6 +105,7 @@ fmt: check-terraform
 	$(TERRAFORM) fmt -recursive terraform/
 
 tf-validate: check-terraform
+	$(TERRAFORM) fmt -check -recursive terraform/
 	@for d in $(TF_MODULE_DIRS) $(TF_EXAMPLE_DIRS); do \
 	  echo "==> terraform validate $$d"; \
 	  (cd $$d && $(TERRAFORM) init -backend=false -input=false -no-color >/dev/null && \
@@ -110,7 +116,7 @@ helm-lint: check-helm
 	$(HELM) lint $(HELM_CHART_DIR)
 	$(HELM) lint $(HELM_CHART_DIR) --values $(HELM_CHART_DIR)/values-airgap.yaml
 	$(HELM) lint $(HELM_CHART_DIR) --values $(HELM_CHART_DIR)/values-dev.yaml
-	./tests/helm-runtime-contract-test.sh
+	HELM="$(HELM)" ./tests/helm-runtime-contract-test.sh
 
 shell-lint: check-shellcheck
 	$(SHELLCHECK) scripts/*.sh tests/*.sh examples/**/scripts/*.sh
