@@ -1,4 +1,4 @@
-# llm-onprem-deployment-kit
+# LLM On-Prem Deployment Kit
 
 ## Live Demo
 

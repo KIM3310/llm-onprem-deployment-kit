@@ -5,12 +5,13 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CHART="${REPO_ROOT}/helm/llm-stack"
 OUT_DIR="$(mktemp -d)"
+HELM_BIN="${HELM:-helm}"
 
 cleanup() { rm -rf "${OUT_DIR}"; }
 trap cleanup EXIT
 
-command -v helm >/dev/null 2>&1 || {
-  echo "helm not in PATH"
+command -v "${HELM_BIN}" >/dev/null 2>&1 || {
+  echo "helm not found or not executable: ${HELM_BIN}" >&2
   exit 2
 }
 
@@ -18,10 +19,10 @@ DEFAULT_RENDER="${OUT_DIR}/default.yaml"
 AIRGAP_RENDER="${OUT_DIR}/airgap.yaml"
 DEV_RENDER="${OUT_DIR}/dev.yaml"
 
-helm template llm-stack "${CHART}" > "${DEFAULT_RENDER}"
-helm template llm-stack "${CHART}" \
+"${HELM_BIN}" template llm-stack "${CHART}" > "${DEFAULT_RENDER}"
+"${HELM_BIN}" template llm-stack "${CHART}" \
   --values "${CHART}/values-airgap.yaml" > "${AIRGAP_RENDER}"
-helm template llm-stack "${CHART}" \
+"${HELM_BIN}" template llm-stack "${CHART}" \
   --values "${CHART}/values-dev.yaml" > "${DEV_RENDER}"
 
 assert_contains() {
@@ -69,12 +70,12 @@ assert_contains "${AIRGAP_RENDER}" "name: llm-stack-allow-gateway-ingress"
 assert_not_contains "${DEV_RENDER}" "name: VLLM_API_KEY"
 assert_not_contains "${DEV_RENDER}" "kind: ExternalSecret"
 
-if helm template llm-stack "${CHART}" --set vectorDb.replicaCount=2 >/dev/null 2>&1; then
+if "${HELM_BIN}" template llm-stack "${CHART}" --set vectorDb.replicaCount=2 >/dev/null 2>&1; then
   echo "expected an unconfigured multi-replica Qdrant render to fail" >&2
   exit 1
 fi
 
-if helm template llm-stack "${CHART}" \
+if "${HELM_BIN}" template llm-stack "${CHART}" \
   --set inference.auth.existingSecret= >/dev/null 2>&1; then
   echo "expected a missing inference API-key secret reference to fail" >&2
   exit 1
