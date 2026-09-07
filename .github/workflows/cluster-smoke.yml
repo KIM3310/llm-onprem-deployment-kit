@@ -1,0 +1,30 @@
+name: Kubernetes deployment smoke
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  kind-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3 # v1.12.0
+        with:
+          cluster_name: portfolio-smoke
+      - name: Deploy and exercise the actual chart
+        run: bash tests/cluster-smoke.sh
+      - name: Kubernetes diagnostics on failure
+        if: failure()
+        run: |
+          kubectl -n llm-smoke get pods,events
+          kubectl -n llm-smoke logs -l app.kubernetes.io/component=gateway --tail=100 || true
+          kubectl -n llm-smoke logs -l app.kubernetes.io/component=inference --tail=100 || true
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: cluster-smoke
+          path: artifacts/cluster-smoke.json
+          if-no-files-found: error
