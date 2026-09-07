@@ -18,7 +18,9 @@ kind load docker-image llm-protocol-fixture:ci --name "$KIND_CLUSTER_NAME"
 kubectl create namespace llm-smoke
 openssl req -x509 -newkey rsa:2048 -nodes -days 1 -keyout "$work_dir/key.pem" -out "$work_dir/cert.pem" -subj /CN=localhost -addext subjectAltName=DNS:localhost >/dev/null 2>&1
 kubectl -n llm-smoke create secret tls llm-stack-tls --cert="$work_dir/cert.pem" --key="$work_dir/key.pem"
-kubectl -n llm-smoke create secret generic llm-stack-inference-api-key --from-literal=api-key=fixture-only-not-a-real-credential
+fixture_key="$(openssl rand -hex 24)"
+invalid_key="invalid-test-key"
+kubectl -n llm-smoke create secret generic llm-stack-inference-api-key --from-literal="api-key=$fixture_key"
 helm upgrade --install llm-stack helm/llm-stack -n llm-smoke -f tests/cluster-fixture/values.yaml --wait --timeout 180s
 kubectl -n llm-smoke rollout status deployment/llm-stack-gateway --timeout=120s
 kubectl -n llm-smoke port-forward service/llm-stack-gateway 18080:80 18443:443 >"$work_dir/forward.log" 2>&1 &
@@ -30,8 +32,8 @@ done
 http_status="$(curl -sS -o /dev/null -w '%{http_code}' http://localhost:18080/v1/models)"
 [[ "$http_status" == 301 || "$http_status" == 308 ]]
 [[ "$(curl --cacert "$work_dir/cert.pem" -sS -o /dev/null -w '%{http_code}' https://localhost:18443/v1/models)" == 401 ]]
-[[ "$(curl --cacert "$work_dir/cert.pem" -sS -H 'Authorization: Bearer wrong-key' -o /dev/null -w '%{http_code}' https://localhost:18443/v1/models)" == 401 ]]
-curl --cacert "$work_dir/cert.pem" -fsS -H 'Authorization: Bearer fixture-only-not-a-real-credential' https://localhost:18443/v1/models > "$work_dir/models.json"
+[[ "$(curl --cacert "$work_dir/cert.pem" -sS -H "Authorization: Bearer $invalid_key" -o /dev/null -w '%{http_code}' https://localhost:18443/v1/models)" == 401 ]]
+curl --cacert "$work_dir/cert.pem" -fsS -H "Authorization: Bearer $fixture_key" https://localhost:18443/v1/models > "$work_dir/models.json"
 python3 - "$work_dir/models.json" <<'CHECK'
 import json, sys
 assert json.load(open(sys.argv[1]))["data"][0]["id"] == "synthetic-fixture-no-model"
@@ -40,10 +42,10 @@ CHECK
 kubectl -n llm-smoke delete pod -l app.kubernetes.io/component=inference --wait=true
 kubectl -n llm-smoke rollout status deployment/llm-stack-inference --timeout=120s
 for _ in {1..30}; do
-  if curl --cacert "$work_dir/cert.pem" -fsS -H 'Authorization: Bearer fixture-only-not-a-real-credential' https://localhost:18443/v1/models >/dev/null; then break; fi
+  if curl --cacert "$work_dir/cert.pem" -fsS -H "Authorization: Bearer $fixture_key" https://localhost:18443/v1/models >/dev/null; then break; fi
   sleep 1
 done
-curl --cacert "$work_dir/cert.pem" -fsS -H 'Authorization: Bearer fixture-only-not-a-real-credential' https://localhost:18443/v1/models >/dev/null
+curl --cacert "$work_dir/cert.pem" -fsS -H "Authorization: Bearer $fixture_key" https://localhost:18443/v1/models >/dev/null
 mkdir -p artifacts
 python3 - <<'PROOF'
 import json
