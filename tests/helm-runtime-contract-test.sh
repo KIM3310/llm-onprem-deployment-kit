@@ -81,4 +81,7 @@ if "${HELM_BIN}" template llm-stack "${CHART}" \
   exit 1
 fi
 
+assert_contains "${DEFAULT_RENDER}" "require-https:"
+assert_contains "${DEFAULT_RENDER}" "redirectScheme:"
+assert_not_contains "${DEV_RENDER}" "redirectScheme:"
 echo "helm runtime contract ok"

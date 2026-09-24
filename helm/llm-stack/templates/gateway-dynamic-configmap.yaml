@@ -14,6 +14,10 @@ data:
             - web
           rule: PathPrefix(`/`)
           service: inference
+          {{- if .Values.gateway.tls.enabled }}
+          middlewares:
+            - require-https
+          {{- end }}
         {{- if .Values.gateway.tls.enabled }}
         inference-https:
           entryPoints:
@@ -22,6 +26,13 @@ data:
           service: inference
           tls: {}
         {{- end }}
+      {{- if .Values.gateway.tls.enabled }}
+      middlewares:
+        require-https:
+          redirectScheme:
+            scheme: https
+            permanent: true
+      {{- end }}
       services:
         inference:
           loadBalancer:

@@ -1,0 +1,38 @@
+# Local kind integration fixture. Never use for actual inference.
+fullnameOverride: llm-stack
+inference:
+  image:
+    repository: llm-protocol-fixture
+    tag: ci
+    pullPolicy: Never
+  nodeSelector: null
+  tolerations: []
+  resources:
+    limits:
+      nvidia.com/gpu: null
+      memory: 128Mi
+      cpu: '1'
+    requests:
+      nvidia.com/gpu: null
+      memory: 64Mi
+      cpu: 100m
+  probes:
+    startupSeconds: 60
+    liveness:
+      initialDelaySeconds: 1
+    readiness:
+      initialDelaySeconds: 1
+      periodSeconds: 2
+vectorDb:
+  enabled: false
+observability:
+  otelCollector:
+    enabled: false
+gateway:
+  traefik:
+    replicaCount: 1
+    service:
+      type: ClusterIP
+      annotations: {}
+networkPolicy:
+  enabled: false
