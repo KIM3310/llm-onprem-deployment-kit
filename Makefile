@@ -204,5 +204,4 @@ clean:
 	@echo "Removing local terraform caches..."
 	@find terraform -type d -name .terraform -prune -exec rm -rf {} +
 	@find terraform -type f -name '*.tfplan' -delete
-	@find terraform -type f -name '.terraform.lock.hcl' -delete
 	@echo "Clean complete."
